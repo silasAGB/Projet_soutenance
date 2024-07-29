@@ -13,8 +13,8 @@
             <a href="{{ route('boilerplate.approvisionnements.gerer') }}" class="btn btn-default" data-toggle="tooltip" title="@lang('Retour à la liste')">
                 <span class="far fa-arrow-alt-circle-left text-muted"></span>
             </a>
-            <a href="{{ route('boilerplate.approvisionnements.gerer', $approvisionnement->id_approvisionnement) }}" class="btn btn-primary" data-toggle="tooltip" title="@lang('Télécharger le bon de commande')">
-                <span class="fas fa-download text-muted"></span> @lang('Télécharger PDF')
+            <a href="{{ route('boilerplate.approvisionnements.gerer', $approvisionnement->id_approvisionnement) }}" class="btn btn-primary float-right" data-toggle="tooltip" title="@lang('Télécharger le bon de commande')">
+                <span class="fas fa-download"></span>
             </a>
         </div>
     </div>
@@ -46,11 +46,11 @@
                             <td>{{ $matierePremiere->nom_MP }}</td>
                             <td>
                                 @php
-                                    $fournisseur = $matierePremiere->fournisseurs->where('id_fournisseur', $matierePremiere->pivot->id_fournisseur)->first();
+                                    $fournisseur = \App\Models\Fournisseur::find($matierePremiere->pivot->id_fournisseur);
                                 @endphp
                                 {{ $fournisseur ? $fournisseur->nom_fournisseur : 'N/A' }}
                             </td>
-                            <td>{{ $matierePremiere->pivot->qte_approvisionnement }}</td>
+                            <td>{{ $matierePremiere->pivot->qte_approvisionnement }} {{ $matierePremiere->unite }}</td>
                             <td>{{ number_format($matierePremiere->pivot->montant, 2) }} FCFA</td>
                         </tr>
                     @endforeach

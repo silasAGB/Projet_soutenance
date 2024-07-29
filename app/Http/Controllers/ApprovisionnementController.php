@@ -18,11 +18,10 @@ class ApprovisionnementController extends Controller
     }
 
     public function show($id_approvisionnement)
-    {
-        $approvisionnement = Approvisionnement::with(['matieresPremieres', 'fournisseurs'])->findOrFail($id_approvisionnement);
-        return view('boilerplate::approvisionnements.details', compact('approvisionnement'));
-    }
-
+{
+    $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->findOrFail($id_approvisionnement);
+    return view('boilerplate::approvisionnements.details', compact('approvisionnement'));
+}
 
 
     public function create()
