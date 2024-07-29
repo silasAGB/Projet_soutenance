@@ -1,0 +1,14 @@
+.navbar-logo {
+    height: 40px;
+    transition: height 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.sidebar-mini.sidebar-collapse .navbar-logo {
+    height: 40px;
+    margin-left: 60px;
+}
+
+.sidebar-mini .navbar-logo {
+    height: 80px; /* Ajustez la hauteur selon vos besoins */
+    margin-left: 0;
+}
