@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MatierePremiere;
 use App\Models\Categorie;
+use App\Models\Fournisseur; // Assurez-vous d'importer le modèle Fournisseur
 use Illuminate\Http\Request;
 
 class MatierePremiereController extends Controller
@@ -48,14 +49,14 @@ class MatierePremiereController extends Controller
     {
         $matierePremiere = MatierePremiere::findOrFail($id_MP);
         $categories = Categorie::all();
-        return view('boilerplate::matierepremieres.edit', compact('matierePremiere', 'categories'));
+        $fournisseurs = Fournisseur::all(); // Récupérer tous les fournisseurs
+        return view('boilerplate::matierepremieres.edit', compact('matierePremiere', 'categories', 'fournisseurs'));
     }
 
     public function update(Request $request, $id_MP)
     {
         $request->validate([
             'nom_MP' => 'required',
-            'prix_achat' => 'required|numeric',
             'unite' => 'required',
             'qte_stock' => 'required|numeric',
             'stock_min' => 'required|numeric',
@@ -65,6 +66,13 @@ class MatierePremiereController extends Controller
 
         $matierePremiere = MatierePremiere::findOrFail($id_MP);
         $matierePremiere->update($request->all());
+
+        // Mettre à jour les fournisseurs et leurs prix d'achat
+        $fournisseurs = $request->input('fournisseurs', []);
+        $matierePremiere->fournisseurs()->sync([]);
+        foreach ($fournisseurs as $fournisseur) {
+            $matierePremiere->fournisseurs()->attach($fournisseur['id'], ['prix_achat' => $fournisseur['prix_achat']]);
+        }
 
         return redirect()->route('boilerplate.matierepremieres.index')
             ->with('success', 'Matière première mise à jour avec succès.');

@@ -7,13 +7,13 @@ use Sebastienheyd\Boilerplate\Datatables\Button;
 use Sebastienheyd\Boilerplate\Datatables\Column;
 use Sebastienheyd\Boilerplate\Datatables\Datatable;
 
-class MatierepremiersDatatable extends Datatable
+class MatierepremieresDatatable extends Datatable
 {
-    public $slug = 'matierepremiers';
+    public $slug = 'matierepremieres';
 
     public function datasource()
     {
-        return MatierePremiere::query();
+        return MatierePremiere::with('categorie')->select('matiere_premieres.*');
     }
 
     public function setUp()
@@ -24,12 +24,8 @@ class MatierepremiersDatatable extends Datatable
     public function columns(): array
     {
         return [
-
             Column::add(__('Nom Mp'))
                 ->data('nom_MP'),
-
-            Column::add(__('Prix Achat en FCFA'))
-                ->data('prix_achat'),
 
             Column::add(__('Unite'))
                 ->data('unite'),
@@ -43,9 +39,8 @@ class MatierepremiersDatatable extends Datatable
             Column::add(__('Emplacement'))
                 ->data('emplacement'),
 
-            Column::add(__('Id Categorie'))
-                ->data('id_categorie'),
-
+            Column::add(__('Catégorie'))
+                ->data('categorie.nom_Categorie'),
             Column::add(__('Created At'))
                 ->width('180px')
                 ->data('created_at')
@@ -60,9 +55,8 @@ class MatierepremiersDatatable extends Datatable
                 ->width('20px')
                 ->actions(function (MatierePremiere $matierepremiere) {
                     return join([
-                        // Button::show('matierepremiere.show', $matierepremiere),
-                         Button::edit('boilerplate.matierepremieres.edit', $matierepremiere->id_MP),
-                         Button::delete('boilerplate.matierepremieres.destroy', $matierepremiere->id_MP),
+                        Button::edit('boilerplate.matierepremieres.edit', $matierepremiere->id_MP),
+                        Button::delete('boilerplate.matierepremieres.destroy', $matierepremiere->id_MP),
                     ]);
                 }),
         ];

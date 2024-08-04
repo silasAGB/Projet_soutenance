@@ -46,16 +46,13 @@
                                     <select class="form-control matierePremiereSelect" name="matieresPremieres[0][id_MP]" required>
                                         <option value="">Sélectionner une matière première</option>
                                         @foreach($matieresPremieres as $matierePremiere)
-                                            <option value="{{ $matierePremiere->id_MP }}" data-price="{{ $matierePremiere->prix_achat }}">{{ $matierePremiere->nom_MP }}</option>
+                                            <option value="{{ $matierePremiere->id_MP }}" data-fournisseurs="{{ json_encode($matierePremiere->fournisseurs) }}">{{ $matierePremiere->nom_MP }}</option>
                                         @endforeach
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-control" name="matieresPremieres[0][id_fournisseur]" required>
+                                    <select class="form-control fournisseurSelect" name="matieresPremieres[0][id_fournisseur]" required>
                                         <option value="">Sélectionner un fournisseur</option>
-                                        @foreach($fournisseurs as $fournisseur)
-                                            <option value="{{ $fournisseur->id_fournisseur }}">{{ $fournisseur->nom_fournisseur }}</option>
-                                        @endforeach
                                     </select>
                                 </td>
                                 <td>
@@ -82,28 +79,34 @@
 
             function calculateMontant(row) {
                 const quantity = parseFloat(row.find('.quantity').val()) || 0;
-                const price = parseFloat(row.find('.matierePremiereSelect option:selected').data('price')) || 0;
+                const price = parseFloat(row.find('.fournisseurSelect option:selected').data('price')) || 0;
                 const montant = quantity * price;
                 row.find('.montant').val(montant.toFixed(2));
             }
 
+            function populateFournisseurs(row, fournisseurs) {
+                const fournisseurSelect = row.find('.fournisseurSelect');
+                fournisseurSelect.empty();
+                fournisseurSelect.append('<option value="">Sélectionner un fournisseur</option>');
+                fournisseurs.forEach(fournisseur => {
+                    fournisseurSelect.append(`<option value="${fournisseur.id_fournisseur}" data-price="${fournisseur.pivot.prix_achat}">${fournisseur.nom_fournisseur}</option>`);
+                });
+            }
+
             $('#addRow').click(function() {
-                $('#matieresPremieresTable tbody').append(`
+                const newRow = `
                     <tr>
                         <td>
                             <select class="form-control matierePremiereSelect" name="matieresPremieres[${rowNumber}][id_MP]" required>
                                 <option value="">Sélectionner une matière première</option>
                                 @foreach($matieresPremieres as $matierePremiere)
-                                    <option value="{{ $matierePremiere->id_MP }}" data-price="{{ $matierePremiere->prix_achat }}">{{ $matierePremiere->nom_MP }}</option>
+                                    <option value="{{ $matierePremiere->id_MP }}" data-fournisseurs="{{ json_encode($matierePremiere->fournisseurs) }}">{{ $matierePremiere->nom_MP }}</option>
                                 @endforeach
                             </select>
                         </td>
                         <td>
-                            <select class="form-control" name="matieresPremieres[${rowNumber}][id_fournisseur]" required>
+                            <select class="form-control fournisseurSelect" name="matieresPremieres[${rowNumber}][id_fournisseur]" required>
                                 <option value="">Sélectionner un fournisseur</option>
-                                @foreach($fournisseurs as $fournisseur)
-                                    <option value="{{ $fournisseur->id_fournisseur }}">{{ $fournisseur->nom_fournisseur }}</option>
-                                @endforeach
                             </select>
                         </td>
                         <td>
@@ -116,7 +119,8 @@
                             <button type="button" class="btn btn-danger removeRow">-</button>
                         </td>
                     </tr>
-                `);
+                `;
+                $('#matieresPremieresTable tbody').append(newRow);
                 rowNumber++;
             });
 
@@ -130,6 +134,12 @@
             });
 
             $(document).on('change', '.matierePremiereSelect', function() {
+                const row = $(this).closest('tr');
+                const fournisseurs = $(this).find('option:selected').data('fournisseurs');
+                populateFournisseurs(row, fournisseurs);
+            });
+
+            $(document).on('change', '.fournisseurSelect', function() {
                 const row = $(this).closest('tr');
                 calculateMontant(row);
             });
