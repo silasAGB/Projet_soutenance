@@ -18,6 +18,8 @@
         </span>
     </div>
 </div>
+@component('boilerplate::card')
 <x-boilerplate::datatable name="produits" />
+@endcomponent
 @stop
 

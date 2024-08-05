@@ -68,7 +68,7 @@ class ProduitController extends Controller
             'qte_stock' => 'required|numeric',
             'stock_min' => 'nullable|numeric',
             'emplacement' => 'nullable|string',
-            'id_Categorie' => 'required|exists:categories,id_categorie',
+            'id_categorie' => 'required|exists:categories,id_Categorie',
         ]);
 
         $produit = Produit::findOrFail($id_produit);

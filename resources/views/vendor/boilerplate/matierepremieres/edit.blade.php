@@ -1,112 +1,120 @@
 @extends('boilerplate::layout.index', [
-    'title' => __('boilerplate::matierepremieres.title'),
-    'subtitle' => __('boilerplate::matierepremieres.edit.title'),
+    'title' => __('Modifier Matière Première'),
+    'subtitle' => __('Modification de la matière première'),
     'breadcrumb' => [
-        __('boilerplate::matierepremieres.title') => 'boilerplate.matierepremieres.index',
-        __('boilerplate::matierepremieres.edit.title')
+        __('Matières Premières') => 'boilerplate.matierepremieres.index',
+        __('Modification de la matière première')
     ]
 ])
 
-@section('content_header')
-    <h1>@lang('Modifier la Matière Première')</h1>
-@stop
-
 @section('content')
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('boilerplate.matierepremieres.update', $matierePremiere->id_MP) }}" method="POST">
-                @csrf
-                @method('PUT')
+    @component('boilerplate::form', ['method' => 'put', 'route' => ['boilerplate.matierepremieres.update', $matierePremiere->id_MP]])
+        <div class="row">
+            <div class="col-12 pb-3">
+                <a href="{{ route('boilerplate.matierepremieres.index') }}" class="btn btn-default" data-toggle="tooltip" title="@lang('boilerplate::matierepremieres.returntolist')">
+                    <span class="far fa-arrow-alt-circle-left text-muted"></span>
+                </a>
+                <span class="btn-group float-right">
+                    <button type="submit" class="btn btn-primary">
+                        @lang('Enregistrer')
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @component('boilerplate::card', ['color' => 'orange'])
+                    <div class="form-group">
+                        <label for="nom_MP">@lang('Nom')</label>
+                        <input type="text" id="nom_MP" name="nom_MP" class="form-control" value="{{ old('nom_MP', $matierePremiere->nom_MP) }}" required>
+                        @error('nom_MP')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="nom_MP">@lang('Nom')</label>
-                    <input type="text" id="nom_MP" name="nom_MP" class="form-control" value="{{ old('nom_MP', $matierePremiere->nom_MP) }}" required>
-                    @error('nom_MP')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <div class="form-group">
+                        <label for="unite">@lang('Unité')</label>
+                        <select id="unite" name="unite" class="form-control" required>
+                            <option value="">@lang('Sélectionnez une unité')</option>
+                            <option value="kg" {{ old('unite', $matierePremiere->unite) == 'kg' ? 'selected' : '' }}>Kg</option>
+                            <option value="l" {{ old('unite', $matierePremiere->unite) == 'l' ? 'selected' : '' }}>L</option>
+                            <option value="g" {{ old('unite', $matierePremiere->unite) == 'g' ? 'selected' : '' }}>G</option>
+                            <option value="ml" {{ old('unite', $matierePremiere->unite) == 'ml' ? 'selected' : '' }}>mL</option>
+                            <!-- Ajoutez d'autres unités si nécessaire -->
+                        </select>
+                        @error('unite')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="unite">@lang('Unité')</label>
-                    <select id="unite" name="unite" class="form-control" required>
-                        <option value="">@lang('Sélectionnez une unité')</option>
-                        <option value="kg" {{ old('unite', $matierePremiere->unite) == 'kg' ? 'selected' : '' }}>Kg</option>
-                        <option value="l" {{ old('unite', $matierePremiere->unite) == 'l' ? 'selected' : '' }}>L</option>
-                        <option value="g" {{ old('unite', $matierePremiere->unite) == 'g' ? 'selected' : '' }}>G</option>
-                        <option value="ml" {{ old('unite', $matierePremiere->unite) == 'ml' ? 'selected' : '' }}>mL</option>
-                        <!-- Ajoutez d'autres unités si nécessaire -->
-                    </select>
-                    @error('unite')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <div class="form-group">
+                        <label for="qte_stock">@lang('Quantité en Stock')</label>
+                        <input type="number" id="qte_stock" name="qte_stock" class="form-control" value="{{ old('qte_stock', $matierePremiere->qte_stock) }}" required>
+                        @error('qte_stock')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="qte_stock">@lang('Quantité en Stock')</label>
-                    <input type="number" id="qte_stock" name="qte_stock" class="form-control" value="{{ old('qte_stock', $matierePremiere->qte_stock) }}" required>
-                    @error('qte_stock')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <div class="form-group">
+                        <label for="stock_min">@lang('Stock Minimum')</label>
+                        <input type="number" id="stock_min" name="stock_min" class="form-control" value="{{ old('stock_min', $matierePremiere->stock_min) }}" required>
+                        @error('stock_min')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                @endcomponent
+            </div>
+            <div class="col-md-6">
+                @component('boilerplate::card', ['color' => 'teal'])
+                    <div class="form-group">
+                        <label for="emplacement">@lang('Emplacement')</label>
+                        <input type="text" id="emplacement" name="emplacement" class="form-control" value="{{ old('emplacement', $matierePremiere->emplacement) }}" required>
+                        @error('emplacement')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="stock_min">@lang('Stock Minimum')</label>
-                    <input type="number" id="stock_min" name="stock_min" class="form-control" value="{{ old('stock_min', $matierePremiere->stock_min) }}" required>
-                    @error('stock_min')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <div class="form-group">
+                        <label for="id_categorie">@lang('Catégorie')</label>
+                        <select id="id_categorie" name="id_categorie" class="form-control" required>
+                            @foreach ($categories as $categorie)
+                                <option value="{{ $categorie->id_Categorie }}" {{ old('id_categorie', $matierePremiere->id_categorie) == $categorie->id_Categorie ? 'selected' : '' }}>
+                                    {{ $categorie->nom_Categorie }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('id_categorie')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="emplacement">@lang('Emplacement')</label>
-                    <input type="text" id="emplacement" name="emplacement" class="form-control" value="{{ old('emplacement', $matierePremiere->emplacement) }}" required>
-                    @error('emplacement')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="id_categorie">@lang('Catégorie')</label>
-                    <select id="id_categorie" name="id_categorie" class="form-control" required>
-                        @foreach ($categories as $categorie)
-                            <option value="{{ $categorie->id_Categorie }}" {{ old('id_categorie', $matierePremiere->id_categorie) == $categorie->id_Categorie ? 'selected' : '' }}>
-                                {{ $categorie->nom_Categorie }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('id_categorie')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="fournisseurs">@lang('Fournisseurs et Prix d\'Achat')</label>
-                    <div id="fournisseurs">
-                        @foreach ($matierePremiere->fournisseurs as $fournisseur)
-                            <div class="fournisseur-group mb-3">
-                                <div class="input-group">
-                                    <select name="fournisseurs[{{ $loop->index }}][id]" class="form-control">
-                                        @foreach ($fournisseurs as $f)
-                                            <option value="{{ $f->id_fournisseur }}" {{ $fournisseur->id_fournisseur == $f->id_fournisseur ? 'selected' : '' }}>
-                                                {{ $f->nom_fournisseur }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <input type="number" name="fournisseurs[{{ $loop->index }}][prix_achat]" class="form-control" value="{{ old("fournisseurs.{$loop->index}.prix_achat", $fournisseur->pivot->prix_achat) }}" placeholder="@lang('Prix d\'Achat')">
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-danger remove-fournisseur">@lang('Supprimer')</button>
+                    <div class="form-group">
+                        <label for="fournisseurs">@lang('Fournisseurs et Prix d\'Achat')</label>
+                        <div id="fournisseurs">
+                            @foreach ($matierePremiere->fournisseurs as $fournisseur)
+                                <div class="fournisseur-group mb-3">
+                                    <div class="input-group">
+                                        <select name="fournisseurs[{{ $loop->index }}][id]" class="form-control">
+                                            @foreach ($fournisseurs as $f)
+                                                <option value="{{ $f->id_fournisseur }}" {{ $fournisseur->id_fournisseur == $f->id_fournisseur ? 'selected' : '' }}>
+                                                    {{ $f->nom_fournisseur }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <input type="number" name="fournisseurs[{{ $loop->index }}][prix_achat]" class="form-control" value="{{ old("fournisseurs.{$loop->index}.prix_achat", $fournisseur->pivot->prix_achat) }}" placeholder="@lang('Prix d\'Achat')">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-danger remove-fournisseur">@lang('Supprimer')</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
+                        <button type="button" id="add-fournisseur" class="btn btn-secondary">@lang('Ajouter un Fournisseur')</button>
                     </div>
-                    <button type="button" id="add-fournisseur" class="btn btn-secondary">@lang('Ajouter un Fournisseur')</button>
-                </div>
-
-                <button type="submit" class="btn btn-primary">@lang('Mettre à jour')</button>
-            </form>
+                @endcomponent
+            </div>
         </div>
-    </div>
+    @endcomponent
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -146,4 +154,4 @@
             });
         });
     </script>
-@stop
+@endsection

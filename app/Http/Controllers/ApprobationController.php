@@ -1,48 +1,49 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Approvisionnement;
-use App\Models\Production;
 use Illuminate\Http\Request;
+use App\Models\Production;
+use App\Models\Approvisionnement;
 
 class ApprobationController extends Controller
 {
     public function index()
     {
-        $approvisionnements = Approvisionnement::where('status', 'en attente d\'approbation')->get();
-        $productions = Production::where('statut', 'en attente d\'approbation')->get(); // Assurez-vous d'utiliser le bon nom de colonne ici
+        $productions = Production::where('statut', 'en attente d\'approbation')->get();
+        $approvisionnements = Approvisionnement::where('statut', 'en attente d\'approbation')->get();
 
-        return view('boilerplate::approbations.index', compact('approvisionnements', 'productions'));
+        return view('approbations.index', compact('productions', 'approvisionnements'));
     }
 
-    public function approuvé($id, $type)
+    public function approve(Request $request)
     {
-        if ($type === 'production') {
-            $production = Production::findOrFail($id);
-            $production->statut = 'en attente de production';
-            $production->save();
-        } elseif ($type === 'approvisionnement') {
-            $approvisionnement = Approvisionnement::findOrFail($id);
-            $approvisionnement->status = 'en attente de livraison';
-            $approvisionnement->save();
+        // Logique pour approuver l'item
+        if ($request->type === 'production') {
+            $item = Production::find($request->id);
+        } else {
+            $item = Approvisionnement::find($request->id);
         }
+        $item->statut = 'approuvé';
+        $item->save();
 
-        return redirect()->route('approbations.index')->with('success', 'L\'approbation a été approuvée avec succès.');
+        return redirect()->route('approbations.index')->with('success', 'Approbation réussie!');
     }
 
-    public function rejeté($id, $type)
+    public function refuse(Request $request)
     {
-        if ($type === 'production') {
-            $production = Production::findOrFail($id);
-            $production->statut = 'rejeté';
-            $production->save();
-        } elseif ($type === 'approvisionnement') {
-            $approvisionnement = Approvisionnement::findOrFail($id);
-            $approvisionnement->status = 'rejeté';
-            $approvisionnement->save();
+        // Logique pour refuser l'item avec raison
+        if ($request->type === 'production') {
+            $item = Production::find($request->id);
+        } else {
+            $item = Approvisionnement::find($request->id);
         }
+        $item->statut = 'refusé';
+        // Ajouter la raison du refus
+        $item->raison_refus = $request->raison_refus;
+        $item->save();
 
-        return redirect()->route('approbations.index')->with('success', 'L\'approbation a été rejetée avec succès.');
+        return redirect()->route('approbations.index')->with('success', 'Refus réussi!');
     }
 }
+
 

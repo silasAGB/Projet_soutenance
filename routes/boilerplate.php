@@ -86,6 +86,12 @@ Route::group([
             });
         }
 
+        //Approbations
+
+        Route::get('/approbations', [App\Http\Controllers\ApprobationController::class, 'index'])->name('approbations.index');
+        Route::post('/approbations/approve', [App\Http\Controllers\ApprobationController::class, 'approve'])->name('approbations.approve');
+        Route::post('/approbations/refuse', [App\Http\Controllers\ApprobationController::class, 'refuse'])->name('approbations.refuse');
+
         // Categories
         Route::get('categories/list', [CategorieController::class, 'index'])->name('categories.index');
         Route::get('categories/create', [CategorieController::class, 'create'])->name('categories.create');

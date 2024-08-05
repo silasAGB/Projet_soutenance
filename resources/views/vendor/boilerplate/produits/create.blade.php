@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="qte_preparation">Quantité de Préparation</label>
+                    <label for="qte_preparation">Quantité par Préparation</label>
                     <input type="number" id="qte_preparation" name="qte_preparation" class="form-control">
                     @error('qte_preparation')
                         <div class="text-danger">{{ $message }}</div>
@@ -66,9 +66,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="qte_lot">Quantité de Lot</label>
-                    <input type="number" id="qte_Lot" name="qte_Lot" class="form-control">
-                    @error('qte_Lot')
+                    <label for="qte_lot">Quantité par Lot</label>
+                    <input type="number" id="qte_lot" name="qte_lot" class="form-control">
+                    @error('qte_lot')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
