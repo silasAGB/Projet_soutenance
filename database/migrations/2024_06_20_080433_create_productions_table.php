@@ -14,7 +14,7 @@ class CreateProductionsTable extends Migration
     public function up()
     {
         Schema::create('productions', function (Blueprint $table) {
-            $table->id('id_production');
+            $table->id('id_production');    
             $table->date('date_prevue');
             $table->integer('qte_prevue');
             $table->integer('qte_produite');

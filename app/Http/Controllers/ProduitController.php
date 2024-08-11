@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categorie;
 use App\Models\Produit;
 use Illuminate\Http\Request;
+use App\Models\MatierePremiere;
 
 class ProduitController extends Controller
 {
@@ -49,34 +50,53 @@ class ProduitController extends Controller
     }
 
     public function edit($id_produit)
-    {
-        $produit = Produit::findOrFail($id_produit);
-        $categories = Categorie::all();
-        return view('boilerplate::produits.edit', compact('produit', 'categories'));
+{
+    $produit = Produit::findOrFail($id_produit);
+    $categories = Categorie::all();
+    $matieresPremieres = MatierePremiere::all();
+    $matiereProduits = $produit->matierePremieres;
+
+    return view('boilerplate::produits.edit', compact('produit', 'categories', 'matieresPremieres', 'matiereProduits'));
+}
+
+public function update(Request $request, $id_produit)
+{
+    $request->validate([
+        'reference_produit' => 'required',
+        'nom_produit' => 'required',
+        'description_produit' => 'nullable',
+        'prix_details_produit' => 'required|numeric',
+        'prix_gros_produit' => 'nullable|numeric',
+        'qte_preparation' => 'nullable|numeric',
+        'qte_lot' => 'nullable|numeric',
+        'qte_stock' => 'required|numeric',
+        'stock_min' => 'nullable|numeric',
+        'emplacement' => 'nullable|string',
+        'id_categorie' => 'required|exists:categories,id_categorie',
+    ]);
+
+    $produit = Produit::findOrFail($id_produit);
+    $produit->update($request->all());
+
+    $matieresPremieres = $request->input('matieres_premieres', []);
+    $quantites = $request->input('quantites', []);
+
+    // Préparez les données pour la synchronisation
+    $syncData = [];
+    foreach ($matieresPremieres as $index => $matierePremiereId) {
+        if (!empty($quantites[$index])) {
+            $syncData[$matierePremiereId] = ['qte' => $quantites[$index]];
+        }
     }
 
-    public function update(Request $request, $id_produit)
-    {
-        $request->validate([
-            'reference_produit' => 'required',
-            'nom_produit' => 'required',
-            'description_produit' => 'nullable',
-            'prix_details_produit' => 'required|numeric',
-            'prix_gros_produit' => 'nullable|numeric',
-            'qte_preparation' => 'nullable|numeric',
-            'qte_lot' => 'nullable|numeric',
-            'qte_stock' => 'required|numeric',
-            'stock_min' => 'nullable|numeric',
-            'emplacement' => 'nullable|string',
-            'id_categorie' => 'required|exists:categories,id_Categorie',
-        ]);
+    // Synchronisation des matières premières avec les quantités
+    $produit->matierePremieres()->sync($syncData);
 
-        $produit = Produit::findOrFail($id_produit);
-        $produit->update($request->all());
+    return redirect()->route('boilerplate.produits.index')
+        ->with('success', 'Produit mis à jour avec succès.');
+}
 
-        return redirect()->route('boilerplate.produits.index')
-            ->with('success', 'Produit mis à jour avec succès.');
-    }
+
 
     public function destroy($id_produit)
     {

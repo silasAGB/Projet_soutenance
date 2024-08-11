@@ -28,26 +28,23 @@ class ProduitsDatatable extends Datatable
         Column::add(__('Reference Produit'))
             ->data('reference_produit'),
 
-        Column::add(__('Nom Produit'))
+        Column::add(__('Nom'))
             ->data('nom_produit'),
 
-        Column::add(__('Prix Details Produit'))
+        Column::add(__('Prix Details'))
             ->data('prix_details_produit'),
 
-        Column::add(__('Prix Gros Produit'))
+        Column::add(__('Prix en Gros'))
             ->data('prix_gros_produit'),
 
-        Column::add(__('Qte Preparation'))
+        Column::add(__('Qte par Preparation'))
             ->data('qte_preparation'),
 
-        Column::add(__('Qte Lot'))
+        Column::add(__('Qte par Lot'))
             ->data('qte_lot'),
 
-        Column::add(__('Qte Stock'))
+        Column::add(__('Qte en Stock'))
             ->data('qte_stock'),
-
-        Column::add(__('Stock Min'))
-            ->data('stock_min'),
 
         Column::add(__('Emplacement'))
             ->data('Emplacement'),

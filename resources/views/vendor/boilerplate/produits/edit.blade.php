@@ -24,6 +24,7 @@
         <div class="row">
             <div class="col-md-6">
                 @component('boilerplate::card', ['color' => 'orange'])
+                   
                     <div class="form-group">
                         <label for="reference_produit">Référence</label>
                         <input type="text" id="reference_produit" name="reference_produit" class="form-control" value="{{ $produit->reference_produit }}" required>
@@ -72,6 +73,7 @@
             </div>
             <div class="col-md-6">
                 @component('boilerplate::card', ['color' => 'teal'])
+                    <!-- Les autres champs du produit -->
                     <div class="form-group">
                         <label for="prix_details_produit">Prix de Détail</label>
                         <input type="number" id="prix_details_produit" name="prix_details_produit" class="form-control" value="{{ $produit->prix_details_produit }}" required>
@@ -122,5 +124,83 @@
                 @endcomponent
             </div>
         </div>
+        <!-- Section pour les matières premières -->
+        <div class="row">
+            <div class="col-12">
+                @component('boilerplate::card', ['color' => 'info'])
+                    <div class="form-group">
+                        <label for="matiere_premieres">Matières Premières</label>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Matière Première</th>
+                                    <th>Quantité</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(!empty($matiereProduits) && count($matiereProduits) > 0)
+                                    @foreach($matiereProduits as $matiereProduit)
+                                        <tr>
+                                            <td>
+                                                <select name="matieres_premieres[]" class="form-control" required>
+                                                    @foreach ($matieresPremieres as $matierePremiere)
+                                                        <option value="{{ $matierePremiere->id_MP }}" {{ $matierePremiere->id_MP == $matiereProduit->id ? 'selected' : '' }}>
+                                                            {{ $matierePremiere->nom_MP }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="quantites[]" class="form-control" value="{{ $matiereProduit->pivot->qte }}" required>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger remove-matiere">Supprimer</button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3" class="text-center">Aucune matière première associée.</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-primary add-matiere">Ajouter une matière première</button>
+                    </div>
+                @endcomponent
+            </div>
+        </div>
     @endcomponent
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('.add-matiere').addEventListener('click', function () {
+                const newRow = `
+                    <tr>
+                        <td>
+                            <select name="matieres_premieres[]" class="form-control" required>
+                                @foreach ($matieresPremieres as $matierePremiere)
+                                    <option value="{{ $matierePremiere->id_MP }}">{{ $matierePremiere->nom_MP }}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="quantites[]" class="form-control" required>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger remove-matiere">Supprimer</button>
+                        </td>
+                    </tr>
+                `;
+                document.querySelector('table tbody').insertAdjacentHTML('beforeend', newRow);
+            });
+
+            document.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-matiere')) {
+                    e.target.closest('tr').remove();
+                }
+            });
+        });
+    </script>
 @endsection
