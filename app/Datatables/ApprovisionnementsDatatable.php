@@ -17,7 +17,7 @@ class ApprovisionnementsDatatable extends Datatable
             'date_approvisionnement',
             'reference_approvisionnement',
             'montant',
-            'status',
+            'statut',
             'created_at',
             'updated_at'
         ]);
@@ -43,8 +43,8 @@ class ApprovisionnementsDatatable extends Datatable
             Column::add(__('Montant'))
                 ->data('montant'),
 
-            Column::add(__('Status'))
-                ->data('status'),
+            Column::add(__('Statut'))
+                ->data('statut'),
 
             Column::add(__('Créé le'))
                 ->width('180px')
@@ -68,3 +68,4 @@ class ApprovisionnementsDatatable extends Datatable
         ];
     }
 }
+

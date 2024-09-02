@@ -18,14 +18,9 @@ class Approbations implements MenuItemInterface
 
         $item->add('Apprbations', [
             'permission' => 'backend',
-            'active' => 'boilerplate.approbations.index',
-            'route' => 'boilerplate.approbations.index',
-        ]);
-
-        $item->add('Historiques des approbations', [
-            'permission' => 'backend',
             'active' => 'boilerplate.approbations.gerer',
             'route' => 'boilerplate.approbations.gerer',
         ]);
+
     }
 }

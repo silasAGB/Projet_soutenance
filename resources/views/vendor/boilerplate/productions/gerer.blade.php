@@ -14,5 +14,7 @@
         </span>
     </div>
 </div>
+@component('boilerplate::card')
 <x-boilerplate::datatable name="productions" />
+@endcomponent
 @endsection

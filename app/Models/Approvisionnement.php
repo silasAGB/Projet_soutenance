@@ -11,7 +11,7 @@ class Approvisionnement extends Model
 
     protected $primaryKey = 'id_approvisionnement';
 
-    protected $fillable = ['date_approvisionnement', 'reference_approvisionnement', 'status', 'montant'];
+    protected $fillable = ['date_approvisionnement', 'reference_approvisionnement', 'statut', 'montant'];
 
     public function getFormattedMontantAttribute()
     {

@@ -6,35 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateProductionsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('productions', function (Blueprint $table) {
-            $table->id('id_production');    
+            $table->id('id_production');
+            $table->string('reference_production')->unique();
+            $table->string('nom_production');
             $table->date('date_prevue');
             $table->integer('qte_prevue');
-            $table->integer('qte_produite');
-            $table->date('date_production');
-            $table->float('montant_produit');
+            $table->integer('qte_produite')->nullable();
+            $table->integer('nbr_preparation');
+            $table->date('date_production')->nullable();
+            $table->float('montant_produit')->nullable();
             $table->string('statut');
             $table->timestamps();
 
             $table->unsignedBigInteger('id_Produit');
-            $table->foreign('id_Produit')->references('id_Produit')->on('produits')->onDelete('cascade');
+            $table->foreign('id_Produit')->references('id_produit')->on('produits')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('productions');
     }
 }
+
+

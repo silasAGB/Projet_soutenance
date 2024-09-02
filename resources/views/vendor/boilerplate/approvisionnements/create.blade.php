@@ -46,7 +46,9 @@
                                     <select class="form-control matierePremiereSelect" name="matieresPremieres[0][id_MP]" required>
                                         <option value="">Sélectionner une matière première</option>
                                         @foreach($matieresPremieres as $matierePremiere)
-                                            <option value="{{ $matierePremiere->id_MP }}" data-fournisseurs="{{ json_encode($matierePremiere->fournisseurs) }}">{{ $matierePremiere->nom_MP }}</option>
+                                            <option value="{{ $matierePremiere->id_MP }}" data-fournisseurs="{{ json_encode($matierePremiere->fournisseurs) }}">
+                                                {{ $matierePremiere->nom_MP }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -61,9 +63,7 @@
                                 <td>
                                     <input type="number" step="0.01" class="form-control montant" name="matieresPremieres[0][montant]" required readonly>
                                 </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger removeRow">-</button>
-                                </td>
+                                <td><button type="button" class="btn btn-danger removeRow">-</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -72,7 +72,6 @@
         </div>
     @endcomponent
 
-    @push('js')
     <script>
         $(document).ready(function() {
             let rowNumber = 1;
@@ -89,7 +88,11 @@
                 fournisseurSelect.empty();
                 fournisseurSelect.append('<option value="">Sélectionner un fournisseur</option>');
                 fournisseurs.forEach(fournisseur => {
-                    fournisseurSelect.append(`<option value="${fournisseur.id_fournisseur}" data-price="${fournisseur.pivot.prix_achat}">${fournisseur.nom_fournisseur}</option>`);
+                    fournisseurSelect.append(
+                        `<option value="${fournisseur.id_fournisseur}" data-price="${fournisseur.pivot.prix_achat}">
+                            ${fournisseur.nom_fournisseur}
+                        </option>`
+                    );
                 });
             }
 
@@ -100,7 +103,9 @@
                             <select class="form-control matierePremiereSelect" name="matieresPremieres[${rowNumber}][id_MP]" required>
                                 <option value="">Sélectionner une matière première</option>
                                 @foreach($matieresPremieres as $matierePremiere)
-                                    <option value="{{ $matierePremiere->id_MP }}" data-fournisseurs="{{ json_encode($matierePremiere->fournisseurs) }}">{{ $matierePremiere->nom_MP }}</option>
+                                    <option value="{{ $matierePremiere->id_MP }}" data-fournisseurs="{{ json_encode($matierePremiere->fournisseurs) }}">
+                                        {{ $matierePremiere->nom_MP }}
+                                    </option>
                                 @endforeach
                             </select>
                         </td>
@@ -145,5 +150,4 @@
             });
         });
     </script>
-    @endpush
 @endsection

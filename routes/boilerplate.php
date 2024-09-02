@@ -86,12 +86,6 @@ Route::group([
             });
         }
 
-        //Approbations
-
-        Route::get('/approbations', [App\Http\Controllers\ApprobationController::class, 'index'])->name('approbations.index');
-        Route::post('/approbations/approve', [App\Http\Controllers\ApprobationController::class, 'approve'])->name('approbations.approve');
-        Route::post('/approbations/refuse', [App\Http\Controllers\ApprobationController::class, 'refuse'])->name('approbations.refuse');
-
         // Categories
         Route::get('categories/list', [CategorieController::class, 'index'])->name('categories.index');
         Route::get('categories/create', [CategorieController::class, 'create'])->name('categories.create');
@@ -160,15 +154,17 @@ Route::group([
         Route::get('commandes/statistiques', [CommandeController::class, 'statistiques'])->name('commande.statistiques');
         Route::get('commandes/gerer', [CommandeController::class, 'index'])->name('commande.gerer');
 
-        // Stocks Routes
-        Route::get('stocks/matierespremieres', [MatierePremieresStockController::class, 'index'])->name('stocks.matierespremieres');
-        Route::get('stocks/produits', [ProduitStockController::class, 'index'])->name('stocks.produits');
-
         // Approbations Routes
         Route::get('approbations/index', [ApprobationController::class, 'index'])->name('approbations.index');
         Route::patch('approbations/approuvé/{id}/{type}', [ApprobationController::class, 'approuvé'])->name('approbations.approuvé');
         Route::patch('approbations/rejeté/{id}/{type}', [ApprobationController::class, 'rejeté'])->name('approbations.rejeté');
-        Route::get('approbations/gerer', [ApprobationController::class, 'gerer'])->name('approbations.gerer');
+        Route::get('approbations/gerer', [ApprobationController::class, 'index'])->name('approbations.gerer');
+        Route::get('approbations/production/valider/{id}', [ApprobationController::class, 'validerProduction'])->name('approbations.valider.production');
+        Route::post('approbations/production/refuser/{id}', [ApprobationController::class, 'refuserProduction'])->name('approbations.refuser.production');
+        Route::get('approbations/approvisionnement/valider/{id}', [ApprobationController::class, 'validerApprovisionnement'])->name('approbations.valider.approvisionnement');
+        Route::post('approbations/approvisionnement/refuser/{id}', [ApprobationController::class, 'refuserApprovisionnement'])->name('approbations.refuser.approvisionnement');
+
+
 
         // Dashboard
         Route::get('/', [config('boilerplate.menu.dashboard', DashboardController::class), 'index'])->name('dashboard');

@@ -40,9 +40,6 @@ class ProduitsDatatable extends Datatable
         Column::add(__('Qte par Preparation'))
             ->data('qte_preparation'),
 
-        Column::add(__('Qte par Lot'))
-            ->data('qte_lot'),
-
         Column::add(__('Qte en Stock'))
             ->data('qte_stock'),
 

@@ -5,13 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Production;
 use App\Models\Produit;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class ProductionController extends Controller
 {
     public function index()
     {
-        $productions = Production::all();
+        $productions = Production::with('produit')->get();
         return view('boilerplate::productions.gerer', compact('productions'));
     }
 
@@ -24,64 +23,79 @@ class ProductionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'reference_production' => 'required|string|max:255',
+            'nom_production' => 'required|string|max:255',
+            'id_produit' => 'required|exists:produits,id_produit',
             'date_prevue' => 'required|date',
-            'qte_prevue' => 'required|numeric',
-            'id_Produit' => 'required|exists:produits,id_Produit',
+            'qte_prevue' => 'required|numeric|min:0',
+            'nbr_preparation' => 'nullable|numeric|min:0',
         ]);
 
-        $production = new Production();
-        $production->date_prevue = $request->input('date_prevue');
-        $production->qte_prevue = $request->input('qte_prevue');
-        $production->id_Produit = $request->input('id_Produit');
-        $production->statut = 'en attente d\'approbation'; // Assurez-vous que le statut est défini correctement
-        $production->save();
 
-        return redirect()->route('boilerplate.productions.gerer')
-                         ->with('success', 'Production ajoutée avec succès.');
-    }
+        Production::create([
+            'reference_production' => $request->reference_production,
+            'nom_production' => $request->nom_production,
+            'id_produit' => $request->id_produit,
+            'date_prevue' => $request->date_prevue,
+            'qte_prevue' => $request->qte_prevue,
+            'nbr_preparation' => $request->nbr_preparation,
+            'statut' => 'En attente',
+        ]);
 
-    public function show($id)
-    {
-        $production = Production::findOrFail($id);
-        return view('boilerplate::productions.show', compact('production'));
+        return redirect()->route('boilerplate.productions.gerer')->with('success', 'Production créée avec succès.');
     }
 
     public function edit($id)
     {
         $production = Production::findOrFail($id);
         $produits = Produit::all();
+
         return view('boilerplate::productions.edit', compact('production', 'produits'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
+            'reference_production' => 'required|string|max:255',
+            'nom_production' => 'required|string|max:255',
+            'id_produit' => 'required|exists:produits,id_produit',
             'date_prevue' => 'required|date',
-            'qte_prevue' => 'required|numeric',
-            'id_Produit' => 'required|exists:produits,id_Produit',
-            'statut' => 'required|string|max:255', // Assurez-vous que toutes les colonnes nécessaires sont validées ici
+            'qte_prevue' => 'required|numeric|min:0',
+            'nbr_preparation' => 'nullable|numeric|min:0',
+            'statut' => 'required|in:En attente d\'approbation,En attente de production,Terminé',
+            'qte_produite' => 'required_if:statut,Terminé|nullable|numeric|min:0',
+            'date_production' => 'required_if:statut,Terminé|nullable|date',
         ]);
 
         $production = Production::findOrFail($id);
-        $production->fill($request->all()); // Mettez à jour toutes les colonnes à partir des données du formulaire
-        $production->save();
 
-        return redirect()->route('boilerplate.productions.gerer')
-                         ->with('success', 'Production mise à jour avec succès.');
+        $data = [
+            'reference_production' => $request->reference_production,
+            'nom_production' => $request->nom_production,
+            'id_produit' => $request->id_produit,
+            'date_prevue' => $request->date_prevue,
+            'qte_prevue' => $request->qte_prevue,
+            'nbr_preparation' => $request->nbr_preparation ?? 1,
+            'statut' => $request->statut,
+        ];
+
+        if ($request->statut === 'Terminé') {
+            $data['qte_produite'] = $request->qte_produite;
+            $data['date_production'] = $request->date_production;
+        } else {
+            $data['qte_produite'] = null;
+            $data['date_production'] = null;
+        }
+
+        $production->update($data);
+
+        return redirect()->route('boilerplate.productions.gerer')->with('success', 'Production mise à jour avec succès.');
     }
 
     public function destroy($id)
     {
         $production = Production::findOrFail($id);
         $production->delete();
-
-        return redirect()->route('boilerplate.productions.gerer')
-                         ->with('success', 'Production supprimée avec succès.');
-    }
-
-    public function statistiques()
-    {
-        // Logique pour afficher les statistiques des productions
-        return view('boilerplate::productions.statistiques');
+        return redirect()->route('boilerplate.productions.gerer')->with('success', 'Production supprimée avec succès.');
     }
 }

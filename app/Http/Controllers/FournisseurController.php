@@ -7,20 +7,18 @@ use Illuminate\Http\Request;
 
 class FournisseurController extends Controller
 {
-    // Méthode pour afficher tous les fournisseurs
     public function index()
     {
         $fournisseurs = Fournisseur::all();
         return view('boilerplate::approvisionnements.fournisseurs', compact('fournisseurs'));
     }
 
-    // Méthode pour afficher un formulaire de création de fournisseur
+
     public function create()
     {
         return view('boilerplate::approvisionnements.createfournisseur');
     }
 
-    // Méthode pour enregistrer un nouveau fournisseur
     public function store(Request $request)
     {
         $request->validate([
@@ -36,7 +34,7 @@ class FournisseurController extends Controller
             ->with('growl', [__('fournisseur créé'), 'success']);
     }
 
-    // Méthode pour afficher les détails d'un fournisseur spécifique
+
     public function show($id_fournisseur)
     {
 dd(
@@ -46,14 +44,14 @@ $id_fournisseur
         return view('boilerplate::approvisionnements.fournisseur', compact('fournisseur'));
     }
 
-    // Méthode pour afficher le formulaire de modification d'un fournisseur
+
     public function edit($id_fournisseur)
     {
         $fournisseur = Fournisseur::findOrFail($id_fournisseur);
         return view('boilerplate::approvisionnements.editfournisseur', compact('fournisseur'));
     }
 
-    // Méthode pour mettre à jour un fournisseur
+
     public function update(Request $request, $id_fournisseur)
     {
         dd($id_fournisseur);
@@ -73,9 +71,9 @@ $id_fournisseur
     }
 
 
-    public function destroy($id_fournisseur)
+    public function destroy($id)
     {
-        $fournisseur = Fournisseur::findOrFail($id_fournisseur);
+        $fournisseur = Fournisseur::findOrFail($id);
         $fournisseur->delete();
 
         return redirect()->route('boilerplate.approvisionnements.fournisseurs')

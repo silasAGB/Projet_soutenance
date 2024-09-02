@@ -13,65 +13,55 @@ class ProductionsDatatable extends Datatable
 
     public function datasource()
     {
-        return Production::with('produit')->select('productions.*');
+        return Production::with('produit:id_produit,nom_produit')->select('productions.*');
     }
 
     public function setUp()
     {
-        $this->order('id', 'asc');
-        $this->buttons('filters', 'csv', 'refresh','print');
+        $this->order('id_production', 'asc');
+        $this->buttons('filters', 'csv', 'refresh', 'print');
     }
 
-
     public function columns(): array
-{
-    return [
+    {
+        return [
+            Column::add(__('Référence de Production'))
+                ->data('reference_production'),
 
-        Column::add(__('Date Prevue'))
-            ->width('180px')
-            ->data('date_prevue')
-            ->dateFormat(__("boilerplate::date.Ymd")),
+            Column::add(__('Nom de Production'))
+                ->data('nom_production'),
 
-        Column::add(__('Qte Prevue'))
-            ->data('qte_prevue'),
+            Column::add(__('Date Prévue'))
+                ->width('180px')
+                ->data('date_prevue')
+                ->dateFormat(__("boilerplate::date.Ymd")),
 
-        Column::add(__('Qte Produite'))
-            ->data('qte_produite'),
+            Column::add(__('Nombre de Préparations'))
+                ->data('nbr_preparation'),
 
-        Column::add(__('Date Production'))
-            ->width('180px')
-            ->data('date_production')
-            ->dateFormat(__("boilerplate::date.Ymd")),
+            Column::add(__('Quantité Produite'))
+                ->data('qte_produite'),
 
-        Column::add(__('Montant Produit'))
-            ->data('montant_produit'),
+            Column::add(__('Date de Production'))
+                ->width('180px')
+                ->data('date_production')
+                ->dateFormat(__("boilerplate::date.Ymd")),
 
-        Column::add(__('Statut'))
-            ->data('statut'),
+            Column::add(__('Statut'))
+                ->data('statut'),
 
-        Column::add(__('Produit'))
-            ->data('produit.nom_Produit'),
+            Column::add(__('Produit'))
+            ->data('produit.nom_produit'),
 
-        Column::add(__('Created At'))
-            ->width('180px')
-            ->data('created_at')
-            ->dateFormat(),
-
-        Column::add(__('Updated At'))
-            ->width('180px')
-            ->data('updated_at')
-            ->dateFormat(),
-
-        Column::add()
-            ->width('20px')
-            ->actions(function (Production $production) {
-                return join([
-                     Button::show('boilerplate.productions.show', $production),
-                     Button::edit('boilerplate.productions.edit', $production),
-                     Button::delete('boilerplate.productions.destroy', $production),
-                ]);
-            }),
-    ];
-}
-
+            Column::add()
+                ->width('20px')
+                ->actions(function (Production $production) {
+                    return join([
+                        Button::show('boilerplate.productions.show', $production),
+                        Button::edit('boilerplate.productions.edit', $production),
+                        Button::delete('boilerplate.productions.destroy', $production),
+                    ]);
+                }),
+        ];
+    }
 }

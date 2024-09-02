@@ -7,7 +7,6 @@ use App\Models\Fournisseur;
 use App\Models\MatierePremiere;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade as PDF;
 
 class ApprovisionnementController extends Controller
 {
@@ -18,11 +17,12 @@ class ApprovisionnementController extends Controller
     }
 
     public function show($id_approvisionnement)
-{
-    $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->findOrFail($id_approvisionnement);
-    return view('boilerplate::approvisionnements.details', compact('approvisionnement'));
-}
+    {
+        $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->findOrFail($id_approvisionnement);
+        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré'];
 
+        return view('boilerplate::approvisionnements.details', compact('approvisionnement', 'statuts'));
+    }
 
     public function create()
     {
@@ -45,13 +45,13 @@ class ApprovisionnementController extends Controller
         $approvisionnement = Approvisionnement::create([
             'date_approvisionnement' => $request->date_approvisionnement,
             'reference_approvisionnement' => $request->reference_approvisionnement,
-            'status' => 'en attente d\'approbation',
+            'statut' => 'en attente d\'approbation',
         ]);
 
         $totalMontant = 0;
 
         foreach ($request->matieresPremieres as $matiere) {
-            $prixAchat = MatierePremiere::find($matiere['id_MP'])->prix_achat;
+            $prixAchat = Fournisseur::find($matiere['id_fournisseur'])->matieresPremieres()->where('matiere_premieres.id_MP', $matiere['id_MP'])->first()->pivot->prix_achat;
             $montant = $matiere['qte_approvisionnement'] * $prixAchat;
 
             $approvisionnement->matieresPremieres()->attach($matiere['id_MP'], [
@@ -69,14 +69,15 @@ class ApprovisionnementController extends Controller
                          ->with('success', 'Approvisionnement ajouté avec succès.');
     }
 
-
-
     public function edit($id_approvisionnement)
     {
-        $approvisionnement = Approvisionnement::with(['matieresPremieres', 'fournisseurs'])->findOrFail($id_approvisionnement);
+        $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->findOrFail($id_approvisionnement);
         $fournisseurs = Fournisseur::all();
         $matieresPremieres = MatierePremiere::all();
-        return view('boilerplate::approvisionnements.edit', compact('approvisionnement', 'fournisseurs', 'matieresPremieres'));
+
+        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré'];
+
+        return view('boilerplate::approvisionnements.edit', compact('approvisionnement', 'fournisseurs', 'matieresPremieres', 'statuts'));
     }
 
     public function update(Request $request, $id_approvisionnement)
@@ -94,15 +95,15 @@ class ApprovisionnementController extends Controller
         $approvisionnement->update([
             'date_approvisionnement' => $request->date_approvisionnement,
             'reference_approvisionnement' => $request->reference_approvisionnement,
+            'statut' => $request->statut,
         ]);
 
-        // Detach existing relations and reattach updated ones
         $approvisionnement->matieresPremieres()->detach();
 
         $totalMontant = 0;
 
         foreach ($request->matieresPremieres as $matiere) {
-            $prixAchat = MatierePremiere::find($matiere['id_MP'])->prix_achat;
+            $prixAchat = Fournisseur::find($matiere['id_fournisseur'])->matieresPremieres()->where('matiere_premieres.id_MP', $matiere['id_MP'])->first()->pivot->prix_achat;
             $montant = $matiere['qte_approvisionnement'] * $prixAchat;
 
             $approvisionnement->matieresPremieres()->attach($matiere['id_MP'], [
@@ -120,8 +121,6 @@ class ApprovisionnementController extends Controller
                          ->with('success', 'Approvisionnement mis à jour avec succès.');
     }
 
-
-
     public function destroy($id_approvisionnement)
     {
         $approvisionnement = Approvisionnement::findOrFail($id_approvisionnement);
@@ -129,16 +128,15 @@ class ApprovisionnementController extends Controller
         $approvisionnement->delete();
 
         return redirect()->route('boilerplate.approvisionnements.gerer')
-                         ->with('success', 'Approvisionnement supprimé avec succès.')
-                         ->withHeaders(['Refresh' => '3;url='.route('boilerplate.approvisionnements.gerer')]);
+                         ->with('success', 'Approvisionnement supprimé avec succès.');
     }
 
     public function statistiques()
     {
         $now = Carbon::now();
 
-        $approvisionnementsEnAttenteApprobation = Approvisionnement::where('status', 'en attente d\'approbation')->count();
-        $approvisionnementsEnAttenteLivraison = Approvisionnement::where('status', 'en attente de livraison')->count();
+        $approvisionnementsEnAttenteApprobation = Approvisionnement::where('statut', 'en attente d\'approbation')->count();
+        $approvisionnementsEnAttenteLivraison = Approvisionnement::where('statut', 'en attente de livraison')->count();
         $approvisionnementsEffectueCeMois = Approvisionnement::whereMonth('created_at', $now->month)
                                                             ->whereYear('created_at', $now->year)
                                                             ->count();
@@ -150,3 +148,4 @@ class ApprovisionnementController extends Controller
         ));
     }
 }
+

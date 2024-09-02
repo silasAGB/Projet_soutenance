@@ -62,7 +62,6 @@ class FournisseursDatatable extends Datatable
                 ->width('20px')
                 ->actions(function (Fournisseur $fournisseur) {
                     return join([
-                        Button::show('boilerplate.fournisseur.show', $fournisseur),
                         Button::edit('boilerplate.fournisseur.edit', $fournisseur),
                         Button::delete('boilerplate.fournisseur.destroy', $fournisseur),
                     ]);

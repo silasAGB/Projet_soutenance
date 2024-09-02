@@ -1,49 +1,64 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Production;
 use App\Models\Approvisionnement;
+use App\Models\Production;
+use Illuminate\Http\Request;
 
 class ApprobationController extends Controller
 {
     public function index()
     {
-        $productions = Production::where('statut', 'en attente d\'approbation')->get();
+        $productions = Production::where('statut', 'En attente d\'approbation')->get();
         $approvisionnements = Approvisionnement::where('statut', 'en attente d\'approbation')->get();
 
-        return view('approbations.index', compact('productions', 'approvisionnements'));
+        return view('boilerplate::approbations.gerer', compact('productions', 'approvisionnements'));
     }
 
-    public function approve(Request $request)
+    public function validerProduction($id)
     {
-        // Logique pour approuver l'item
-        if ($request->type === 'production') {
-            $item = Production::find($request->id);
-        } else {
-            $item = Approvisionnement::find($request->id);
-        }
-        $item->statut = 'approuvé';
-        $item->save();
+        $production = Production::findOrFail($id);
+        $production->statut = 'En attente de production';
+        $production->save();
 
-        return redirect()->route('approbations.index')->with('success', 'Approbation réussie!');
+        return redirect()->route('boilerplate.approbations.gerer')->with('success', 'Production validée avec succès.');
     }
 
-    public function refuse(Request $request)
+    public function refuserProduction(Request $request, $id)
     {
-        // Logique pour refuser l'item avec raison
-        if ($request->type === 'production') {
-            $item = Production::find($request->id);
-        } else {
-            $item = Approvisionnement::find($request->id);
-        }
-        $item->statut = 'refusé';
-        // Ajouter la raison du refus
-        $item->raison_refus = $request->raison_refus;
-        $item->save();
+        $request->validate([
+            'raison' => 'required|string|max:255',
+        ]);
 
-        return redirect()->route('approbations.index')->with('success', 'Refus réussi!');
+        $production = Production::findOrFail($id);
+        $production->statut = 'Annulé';
+        $production->raison_refus = $request->raison;
+        $production->save();
+
+        return redirect()->route('boilerplate.approbations.gerer')->with('success', 'Production refusée avec succès.');
+    }
+
+    public function validerApprovisionnement($id)
+    {
+        $approvisionnement = Approvisionnement::findOrFail($id);
+        $approvisionnement->statut = 'en attente de livraison';
+        $approvisionnement->save();
+
+        return redirect()->route('boilerplate.approbations.gerer')->with('success', 'Approvisionnement validé avec succès.');
+    }
+
+    public function refuserApprovisionnement(Request $request, $id)
+    {
+        $request->validate([
+            'raison' => 'required|string|max:255',
+        ]);
+
+        $approvisionnement = Approvisionnement::findOrFail($id);
+        $approvisionnement->statut = 'Annulé';
+        $approvisionnement->raison_refus = $request->raison;
+        $approvisionnement->save();
+
+        return redirect()->route('boilerplate.approbations.gerer')->with('success', 'Approvisionnement refusé avec succès.');
     }
 }
-
-

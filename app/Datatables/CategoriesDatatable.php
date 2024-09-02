@@ -46,9 +46,8 @@ class CategoriesDatatable extends Datatable
                 ->width('20px')
                 ->actions(function (Categorie $categorie) {
                     return join([
-                        // Button::show('categorie.show', $categorie),
-                        Button::edit('boilerplate.categories.edit', $categorie->id_Categorie),
-                        Button::delete('boilerplate.categories.destroy', $categorie->id_Categorie),
+                        Button::edit('boilerplate.categories.edit', $categorie),
+                        Button::delete('boilerplate.categories.destroy', $categorie),
                     ]);
                 }),
         ];

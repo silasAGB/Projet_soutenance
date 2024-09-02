@@ -11,10 +11,21 @@ class Production extends Model
 
     protected $primaryKey = 'id_production';
 
-    protected $fillable = ['date_prevue', 'qte_prevue', 'qte_produite', 'date_production', 'montant_produit', 'statut', 'id_Produit'];
+    protected $fillable = [
+        'reference_production',
+        'nom_production',
+        'date_prevue',
+        'qte_prevue',
+        'qte_produite',
+        'date_production',
+        'montant_produit',
+        'statut',
+        'nbr_preparation',
+        'id_produit'
+    ];
 
     public function produit()
     {
-        return $this->belongsTo(Produit::class, 'id_Produit');
+        return $this->belongsTo(Produit::class, 'id_produit');
     }
 }

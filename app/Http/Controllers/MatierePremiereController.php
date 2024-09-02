@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MatierePremiere;
 use App\Models\Categorie;
-use App\Models\Fournisseur; // Assurez-vous d'importer le modèle Fournisseur
+use App\Models\Fournisseur;
 use Illuminate\Http\Request;
 
 class MatierePremiereController extends Controller
@@ -49,7 +49,7 @@ class MatierePremiereController extends Controller
     {
         $matierePremiere = MatierePremiere::findOrFail($id_MP);
         $categories = Categorie::all();
-        $fournisseurs = Fournisseur::all(); // Récupérer tous les fournisseurs
+        $fournisseurs = Fournisseur::all();
         return view('boilerplate::matierepremieres.edit', compact('matierePremiere', 'categories', 'fournisseurs'));
     }
 
@@ -67,7 +67,6 @@ class MatierePremiereController extends Controller
         $matierePremiere = MatierePremiere::findOrFail($id_MP);
         $matierePremiere->update($request->all());
 
-        // Mettre à jour les fournisseurs et leurs prix d'achat
         $fournisseurs = $request->input('fournisseurs', []);
         $matierePremiere->fournisseurs()->sync([]);
         foreach ($fournisseurs as $fournisseur) {
