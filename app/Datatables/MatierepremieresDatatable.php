@@ -39,17 +39,6 @@ class MatierepremieresDatatable extends Datatable
             Column::add(__('Emplacement'))
                 ->data('emplacement'),
 
-            Column::add(__('Catégorie'))
-                ->data('categorie.nom_Categorie'),
-            Column::add(__('Created At'))
-                ->width('180px')
-                ->data('created_at')
-                ->dateFormat(),
-
-            Column::add(__('Updated At'))
-                ->width('180px')
-                ->data('updated_at')
-                ->dateFormat(),
 
             Column::add()
                 ->width('20px')

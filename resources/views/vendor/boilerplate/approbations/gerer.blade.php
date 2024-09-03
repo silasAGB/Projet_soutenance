@@ -8,7 +8,7 @@
 ])
 
 @section('content')
-<div class="card">
+@component('boilerplate::card')
     <div class="card-header">
         <h3>Productions en attente d'approbation</h3>
     </div>
@@ -43,9 +43,10 @@
             </table>
         @endif
     </div>
-</div>
+    @endcomponent
 
-<div class="card">
+
+@component('boilerplate::card')
     <div class="card-header">
         <h3>Approvisionnements en attente d'approbation</h3>
     </div>
@@ -78,7 +79,7 @@
             </table>
         @endif
     </div>
-</div>
+ @endcomponent
 
 <!-- Modal de refus -->
 <div class="modal fade" id="refusModal" tabindex="-1" role="dialog" aria-labelledby="refusModalLabel" aria-hidden="true">

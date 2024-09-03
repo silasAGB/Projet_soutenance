@@ -24,7 +24,7 @@
         <div class="row">
             <div class="col-md-6">
                 @component('boilerplate::card', ['color' => 'orange'])
-                   
+
                     <div class="form-group">
                         <label for="reference_produit">Référence</label>
                         <input type="text" id="reference_produit" name="reference_produit" class="form-control" value="{{ $produit->reference_produit }}" required>
@@ -145,7 +145,7 @@
                                             <td>
                                                 <select name="matieres_premieres[]" class="form-control" required>
                                                     @foreach ($matieresPremieres as $matierePremiere)
-                                                        <option value="{{ $matierePremiere->id_MP }}" {{ $matierePremiere->id_MP == $matiereProduit->id ? 'selected' : '' }}>
+                                                        <option value="{{ $matierePremiere->id_MP }}" {{ $matierePremiere->id_MP == $matiereProduit->id_MP ? 'selected' : '' }}>
                                                             {{ $matierePremiere->nom_MP }}
                                                         </option>
                                                     @endforeach

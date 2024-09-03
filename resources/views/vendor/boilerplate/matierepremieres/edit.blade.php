@@ -40,7 +40,7 @@
                             <option value="l" {{ old('unite', $matierePremiere->unite) == 'l' ? 'selected' : '' }}>L</option>
                             <option value="g" {{ old('unite', $matierePremiere->unite) == 'g' ? 'selected' : '' }}>G</option>
                             <option value="ml" {{ old('unite', $matierePremiere->unite) == 'ml' ? 'selected' : '' }}>mL</option>
-                            <!-- Ajoutez d'autres unités si nécessaire -->
+
                         </select>
                         @error('unite')
                             <div class="text-danger">{{ $message }}</div>
@@ -141,7 +141,7 @@
                 document.getElementById('fournisseurs').appendChild(fournisseurGroup);
                 fournisseurCount++;
 
-                // Ajouter l'événement de suppression au nouveau bouton
+                
                 fournisseurGroup.querySelector('.remove-fournisseur').addEventListener('click', function () {
                     fournisseurGroup.remove();
                 });

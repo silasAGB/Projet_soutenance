@@ -13,7 +13,7 @@ class Approbations implements MenuItemInterface
             'permission' => 'backend',
             'active' => 'boilerplate.approbations',
             'icon' => 'fa fa-check-square',
-            'order' => 1,
+            'order' => 5,
         ]);
 
         $item->add('Apprbations', [

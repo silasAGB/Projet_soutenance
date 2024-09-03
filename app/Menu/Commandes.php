@@ -13,7 +13,7 @@ class Commandes implements MenuItemInterface
             'permission' => 'backend',
             'active' => 'boilerplate.commande',
             'icon' => 'fa fa-shopping-cart',
-            'order' => 5,
+            'order' => 1,
         ]);
 
         $item->add('Statistiques commandes', [

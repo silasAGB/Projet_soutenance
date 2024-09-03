@@ -23,7 +23,7 @@ class Stocks implements MenuItemInterface
             'route' => 'boilerplate.categories.index',
         ]);
 
-        $item->add('matieres_premiers', [
+        $item->add('Matieres premiers', [
             'permission' => 'backend',
             'active' => 'boilerplate.matierepremieres.index',
             'route' => 'boilerplate.matierepremieres.index',

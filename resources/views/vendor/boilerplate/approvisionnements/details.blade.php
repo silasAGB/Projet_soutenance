@@ -18,10 +18,15 @@
             </a>
         </div>
     </div>
-
+    @component('boilerplate::card')
     <div class="row">
         <div class="col-12">
             <h3>@lang('Bon de commande')</h3>
+            <span class="float-right pb-1   ">
+                <a href="" class="btn btn-primary">
+                    @lang('modifier la production')
+                </a>
+            </span>
             <p><strong>@lang('Référence'):</strong> {{ $approvisionnement->reference_approvisionnement }}</p>
             <p><strong>@lang('Date'):</strong> {{ $approvisionnement->date_approvisionnement }}</p>
             <p><strong>@lang('Montant Total'):</strong> {{ $approvisionnement->formatted_montant }}</p>
@@ -58,4 +63,5 @@
             </table>
         </div>
     </div>
+    @endcomponent
 @endsection

@@ -9,7 +9,7 @@
 
     @section('content')
         @component('boilerplate::form', ['route' => ['boilerplate.productions.update', $production->id_production], 'method' => 'PUT'])
-            <!-- Boutons de navigation et de soumission -->
+            
             <div class="row">
                 <div class="col-12 pb-3">
                     <a href="{{ route('boilerplate.productions.gerer') }}" class="btn btn-default" data-toggle="tooltip" title="@lang('Retour à la liste des productions')">
@@ -23,12 +23,12 @@
                 </div>
             </div>
 
-            <!-- Formulaire de modification -->
+
             <div class="row">
-                <!-- Section Produit et Matières Premières -->
+
                 <div class="col-lg-6">
                     @component('boilerplate::card', ['title' => 'Produit et Matières Premières'])
-                        <!-- Sélection du produit -->
+
                         <div class="form-group">
                             <label for="id_produit">Produit</label>
                             <select class="form-control" id="id_produit" name="id_produit" required>
@@ -44,7 +44,7 @@
                             </select>
                         </div>
 
-                        <!-- Section Matières Premières Nécessaires -->
+
                         <div id="matieres-premieres-section" class="mb-3" style="display: none;">
                             <h5>@lang('Matières premières nécessaires :')</h5>
                             <ul id="matieres-premieres-list"></ul>
@@ -52,10 +52,10 @@
                     @endcomponent
                 </div>
 
-                <!-- Section Détails de la Production -->
+
                 <div class="col-lg-6">
                     @component('boilerplate::card', ['title' => 'Détails de la Production'])
-                        <!-- Champs Référence et Nom de la Production -->
+
                         <div class="form-group">
                             <label for="reference_production">Référence de Production</label>
                             <input type="text" class="form-control" id="reference_production" name="reference_production" value="{{ $production->reference_production }}" required>
@@ -66,10 +66,10 @@
                             <input type="text" class="form-control" id="nom_production" name="nom_production" value="{{ $production->nom_production }}" required>
                         </div>
 
-                        <!-- Champ Date Prévue -->
+
                         @component('boilerplate::input', ['type' => 'date', 'name' => 'date_prevue', 'label' => 'Date prévue', 'required' => true, 'value' => $production->date_prevue])@endcomponent
 
-                        <!-- Champs Quantité Prévue et Nombre de Préparations -->
+
                         <div class="form-group">
                             <label for="qte_prevue">Quantité prévue</label>
                             <input type="number" class="form-control" id="qte_prevue" name="qte_prevue" value="{{ $production->qte_prevue }}">
@@ -88,7 +88,7 @@
                             </div>
                         </div>
 
-                        <!-- Sélection du Statut -->
+
                         <div class="form-group">
                             <label for="statut">Statut</label>
                             <select class="form-control" id="statut" name="statut" required>
@@ -98,7 +98,7 @@
                             </select>
                         </div>
 
-                        <!-- Champs Conditionnels pour Statut "Terminé" -->
+
                         <div id="completed-fields" style="{{ $production->statut == 'Terminé' ? '' : 'display: none;' }}">
                             <div class="form-group">
                                 <label for="qte_produite">Quantité produite</label>
@@ -216,9 +216,6 @@
                     updateQtePrevue();
                 });
 
-                /**
-                 * Gestionnaire d'événement pour le changement de statut.
-                 */
                 $('#statut').on('change', handleStatusChange);
 
                 /**
@@ -250,10 +247,10 @@
                     updateNbPreparations();
                 }
 
-                // Initialisation lors du chargement de la page
+
                 initializeMatieresPremieres();
                 initializeStatus();
-                initializeNbPreparations();  // Ajout de cette ligne
+                initializeNbPreparations();
             });
         </script>
         @endpush
