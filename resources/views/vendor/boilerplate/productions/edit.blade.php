@@ -9,7 +9,7 @@
 
     @section('content')
         @component('boilerplate::form', ['route' => ['boilerplate.productions.update', $production->id_production], 'method' => 'PUT'])
-            
+
             <div class="row">
                 <div class="col-12 pb-3">
                     <a href="{{ route('boilerplate.productions.gerer') }}" class="btn btn-default" data-toggle="tooltip" title="@lang('Retour à la liste des productions')">
@@ -60,12 +60,6 @@
                             <label for="reference_production">Référence de Production</label>
                             <input type="text" class="form-control" id="reference_production" name="reference_production" value="{{ $production->reference_production }}" required>
                         </div>
-
-                        <div class="form-group">
-                            <label for="nom_production">Nom de la Production</label>
-                            <input type="text" class="form-control" id="nom_production" name="nom_production" value="{{ $production->nom_production }}" required>
-                        </div>
-
 
                         @component('boilerplate::input', ['type' => 'date', 'name' => 'date_prevue', 'label' => 'Date prévue', 'required' => true, 'value' => $production->date_prevue])@endcomponent
 

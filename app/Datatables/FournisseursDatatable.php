@@ -36,27 +36,17 @@ class FournisseursDatatable extends Datatable
     {
         return [
 
-            Column::add(__('Nom Fournisseur'))
+            Column::add(__('Nom'))
                 ->data('nom_fournisseur'),
 
-            Column::add(__('Contact Fournisseur'))
+            Column::add(__('Contact'))
                 ->data('contact_fournisseur'),
 
-            Column::add(__('Email Fournisseur'))
+            Column::add(__('Email'))
                 ->data('email_fournisseur'),
 
-            Column::add(__('Adresse Fournisseur'))
+            Column::add(__('Adresse'))
                 ->data('adresse_fournisseur'),
-
-            Column::add(__('Created At'))
-                ->width('180px')
-                ->data('created_at')
-                ->dateFormat(),
-
-            Column::add(__('Updated At'))
-                ->width('180px')
-                ->data('updated_at')
-                ->dateFormat(),
 
             Column::add()
                 ->width('20px')

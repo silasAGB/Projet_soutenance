@@ -26,20 +26,15 @@ class CategoriesDatatable extends Datatable
         return [
 
 
-            Column::add(__('Code Categorie'))
+            Column::add(__('Code'))
                 ->data('code_Categorie'),
 
-            Column::add(__('Nom Categorie'))
+            Column::add(__('Nom'))
                 ->data('nom_Categorie'),
 
             Column::add(__('Created At'))
                 ->width('180px')
                 ->data('created_at')
-                ->dateFormat(),
-
-            Column::add(__('Updated At'))
-                ->width('180px')
-                ->data('updated_at')
                 ->dateFormat(),
 
             Column::add()

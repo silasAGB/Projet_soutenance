@@ -25,7 +25,7 @@ class ProduitsDatatable extends Datatable
 {
     return [
 
-        Column::add(__('Reference Produit'))
+        Column::add(__('Reference'))
             ->data('reference_produit'),
 
         Column::add(__('Nom'))

@@ -26,10 +26,10 @@ class CommandesDatatable extends Datatable
     {
         return [
 
-            Column::add(__('Reference Commande'))
+            Column::add(__('Reference'))
                 ->data('reference_Commande'),
 
-            Column::add(__('Date Commande'))
+            Column::add(__('Date'))
                 ->width('180px')
                 ->data('date_Commande')
                 ->dateFormat(__("boilerplate::date.Ymd")),

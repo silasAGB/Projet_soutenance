@@ -24,7 +24,6 @@ class ProductionController extends Controller
     {
         $request->validate([
             'reference_production' => 'required|string|max:255',
-            'nom_production' => 'required|string|max:255',
             'id_produit' => 'required|exists:produits,id_produit',
             'date_prevue' => 'required|date',
             'qte_prevue' => 'required|numeric|min:0',
@@ -34,7 +33,6 @@ class ProductionController extends Controller
 
         Production::create([
             'reference_production' => $request->reference_production,
-            'nom_production' => $request->nom_production,
             'id_produit' => $request->id_produit,
             'date_prevue' => $request->date_prevue,
             'qte_prevue' => $request->qte_prevue,
@@ -57,7 +55,6 @@ class ProductionController extends Controller
     {
         $request->validate([
             'reference_production' => 'required|string|max:255',
-            'nom_production' => 'required|string|max:255',
             'id_produit' => 'required|exists:produits,id_produit',
             'date_prevue' => 'required|date',
             'qte_prevue' => 'required|numeric|min:0',
@@ -71,7 +68,6 @@ class ProductionController extends Controller
 
         $data = [
             'reference_production' => $request->reference_production,
-            'nom_production' => $request->nom_production,
             'id_produit' => $request->id_produit,
             'date_prevue' => $request->date_prevue,
             'qte_prevue' => $request->qte_prevue,

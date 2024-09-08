@@ -25,14 +25,10 @@
         <div class="row">
             <div class="col-lg-6">
                 @component('boilerplate::card', ['title' => 'Produit et Détails de Production'])
+                    <!-- Référence pré-remplie -->
                     <div class="form-group">
                         <label for="reference_production">Référence de Production</label>
-                        <input type="text" class="form-control" id="reference_production" name="reference_production" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="nom_production">Nom de la Production</label>
-                        <input type="text" class="form-control" id="nom_production" name="nom_production" required>
+                        <input type="text" class="form-control" id="reference_production" name="reference_production" readonly required>
                     </div>
 
                     <div class="form-group">
@@ -41,6 +37,7 @@
                             <option value="" disabled selected>Choisissez un produit</option>
                             @foreach($produits as $produit)
                                 <option value="{{ $produit->id_produit }}"
+                                    data-nom-produit="{{ $produit->nom_produit }}"
                                     data-qte-par-preparation="{{ $produit->qte_preparation }}"
                                     data-matieres-premieres="{{ $produit->matierePremieres->pluck('pivot.qte', 'nom_MP') }}"
                                     data-unites="{{ $produit->matierePremieres->pluck('unite', 'nom_MP') }}">
@@ -90,7 +87,6 @@
                 const selectedOption = $('#id_produit').find('option:selected');
                 const matieresPremieres = selectedOption.data('matieres-premieres');
                 const unites = selectedOption.data('unites');
-                const qteParPreparation = selectedOption.data('qte-par-preparation');
                 const nbPreparations = parseInt($('#nbr_preparation').val()) || 1;
 
                 const matieresPremieresList = $('#matieres-premieres-list');
@@ -123,9 +119,19 @@
                 }
             }
 
+            function updateReference() {
+                const selectedOption = $('#id_produit').find('option:selected');
+                const nomProduit = selectedOption.data('nom-produit');
+                const date_prevue = $('#date_prevue').val();
+                const reference = `Prod-${nomProduit}-${date_prevue}`;
+
+                $('#reference_production').val(reference);
+            }
+
             $('#id_produit').change(function() {
                 updatePreparationsAndQuantity();
                 updateMatieresPremieres();
+                updateReference();
             });
 
             $('#qte_prevue, #nbr_preparation').on('input change', updatePreparationsAndQuantity);

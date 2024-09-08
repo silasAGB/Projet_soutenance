@@ -11,7 +11,6 @@ class CreateProductionsTable extends Migration
         Schema::create('productions', function (Blueprint $table) {
             $table->id('id_production');
             $table->string('reference_production')->unique();
-            $table->string('nom_production');
             $table->date('date_prevue');
             $table->integer('qte_prevue');
             $table->integer('qte_produite')->nullable();

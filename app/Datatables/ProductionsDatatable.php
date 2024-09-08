@@ -25,11 +25,8 @@ class ProductionsDatatable extends Datatable
     public function columns(): array
     {
         return [
-            Column::add(__('Référence de Production'))
+            Column::add(__('Référence'))
                 ->data('reference_production'),
-
-            Column::add(__('Nom de Production'))
-                ->data('nom_production'),
 
             Column::add(__('Date Prévue'))
                 ->width('180px')

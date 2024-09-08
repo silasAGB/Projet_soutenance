@@ -24,7 +24,7 @@ class MatierepremieresDatatable extends Datatable
     public function columns(): array
     {
         return [
-            Column::add(__('Nom Mp'))
+            Column::add(__('Nom'))
                 ->data('nom_MP'),
 
             Column::add(__('Unite'))

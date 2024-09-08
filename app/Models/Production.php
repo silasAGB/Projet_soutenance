@@ -13,7 +13,6 @@ class Production extends Model
 
     protected $fillable = [
         'reference_production',
-        'nom_production',
         'date_prevue',
         'qte_prevue',
         'qte_produite',
