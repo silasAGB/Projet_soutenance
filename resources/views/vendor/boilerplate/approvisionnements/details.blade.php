@@ -23,7 +23,7 @@
         <div class="col-12">
             <h3>@lang('Bon de commande')</h3>
             <span class="float-right pb-1   ">
-                <a href="" class="btn btn-primary">
+                <a href="{{ route('boilerplate.approvisionnements.edit', $approvisionnement->id_approvisionnement) }}" class="btn btn-primary">
                     @lang('modifier la production')
                 </a>
             </span>

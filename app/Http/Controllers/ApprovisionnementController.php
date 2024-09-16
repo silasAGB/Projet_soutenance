@@ -86,7 +86,7 @@ class ApprovisionnementController extends Controller
         $fournisseurs = Fournisseur::all();
         $matieresPremieres = MatierePremiere::all();
 
-        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré'];
+        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré' , 'Annulé'];
 
         return view('boilerplate::approvisionnements.edit', compact('approvisionnement', 'fournisseurs', 'matieresPremieres', 'statuts'));
     }

@@ -25,7 +25,7 @@
             <div class="col-lg-6">
                 @component('boilerplate::card', ['title' => 'Informations sur l\'approvisionnement'])
                     @component('boilerplate::input', ['type' => 'date', 'name' => 'date_approvisionnement', 'label' => 'Date d\'approvisionnement', 'required' => true, 'value' => $approvisionnement->date_approvisionnement])@endcomponent
-                    @component('boilerplate::input', ['name' => 'reference_approvisionnement', 'label' => 'Référence d\'approvisionnement', 'required' => true, 'value' => $approvisionnement->reference_approvisionnement])@endcomponent
+                    @component('boilerplate::input', ['name' => 'reference_approvisionnement', 'label' => 'Référence d\'approvisionnement', 'required' => true, 'value' => $approvisionnement->reference_approvisionnement, 'readonly' => true])@endcomponent
 
                     <div class="form-group">
                         <label for="statut">Statut</label>
