@@ -25,11 +25,6 @@
         <div class="row">
             <div class="col-lg-6">
                 @component('boilerplate::card', ['title' => 'Produit et Détails de Production'])
-                    <!-- Référence pré-remplie -->
-                    <div class="form-group">
-                        <label for="reference_production">Référence de Production</label>
-                        <input type="text" class="form-control" id="reference_production" name="reference_production" readonly required>
-                    </div>
 
                     <div class="form-group">
                         <label for="id_produit">Produit (Nom - Référence)</label>
@@ -117,15 +112,6 @@
                     }
                     updateMatieresPremieres();
                 }
-            }
-
-            function updateReference() {
-                const selectedOption = $('#id_produit').find('option:selected');
-                const nomProduit = selectedOption.data('nom-produit');
-                const date_prevue = $('#date_prevue').val();
-                const reference = `Prod-${nomProduit}-${date_prevue}`;
-
-                $('#reference_production').val(reference);
             }
 
             $('#id_produit').change(function() {

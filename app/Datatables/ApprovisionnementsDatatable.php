@@ -32,13 +32,16 @@ class ApprovisionnementsDatatable extends Datatable
     public function columns(): array
     {
         return [
+
+            Column::add(__('Référence'))
+            ->data('reference_approvisionnement'),
+
+
             Column::add(__('Date prévue'))
                 ->width('180px')
                 ->data('date_approvisionnement')
                 ->dateFormat(__("boilerplate::date.Ymd")),
 
-            Column::add(__('Référence'))
-                ->data('reference_approvisionnement'),
 
             Column::add(__('Montant'))
                 ->data('montant'),

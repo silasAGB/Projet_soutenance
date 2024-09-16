@@ -8,7 +8,7 @@
 ])
 
 @section('content')
-    @component('boilerplate::form', ['route' => 'boilerplate.approvisionnements.store'])
+    @component('boilerplate::form', ['route' => 'boilerplate.approvisionnements.store', 'method' => 'POST'])
         <div class="row">
             <div class="col-12 pb-3">
                 <a href="{{ route('boilerplate.approvisionnements.gerer') }}" class="btn btn-default" data-toggle="tooltip" title="@lang('Retour à la liste')">
@@ -25,9 +25,7 @@
             <div class="col-lg-6">
                 @component('boilerplate::card', ['title' => 'Informations sur l\'approvisionnement'])
                     @component('boilerplate::input', ['type' => 'date', 'name' => 'date_approvisionnement', 'label' => 'Date d\'approvisionnement', 'required' => true, 'value' => old('date_approvisionnement')])@endcomponent
-                    @component('boilerplate::input', ['type' => 'date', 'name' => 'date_prevue', 'label' => 'Date prévue pour l\'approvisionnement', 'required' => true, 'value' => old('date_prevue')])@endcomponent
-                    @component('boilerplate::input', ['name' => 'reference_approvisionnement', 'label' => 'Référence d\'approvisionnement', 'required' => true, 'value' => old('reference_approvisionnement'), 'readonly' => true])@endcomponent
-                @endcomponent
+                   @endcomponent
             </div>
             <div class="col-lg-6">
                 @component('boilerplate::card', ['title' => 'Matières Premières'])
@@ -97,15 +95,6 @@
                 });
             }
 
-            function updateReference() {
-                const dateApprovisionnement = $('#date_approvisionnement').val(); // Date d'approvisionnement
-
-                if (dateApprovisionnement) {
-                    const reference = `Approvisionnement du ${dateApprovisionnement}`;
-                    $('#reference_approvisionnement').val(reference); // Met à jour la référence automatiquement
-                }
-            }
-
             $('#addRow').click(function() {
                 const newRow = `
                     <tr>
@@ -154,9 +143,6 @@
                 populateFournisseurs(row, fournisseurs);
             });
 
-            $(document).on('change', '#date_approvisionnement', function() {
-                updateReference(); // Met à jour la référence après modification de la date d'approvisionnement
-            });
 
             $(document).on('change', '.fournisseurSelect', function() {
                 const row = $(this).closest('tr');

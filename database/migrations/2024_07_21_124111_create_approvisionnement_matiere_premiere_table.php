@@ -26,5 +26,9 @@ class CreateApprovisionnementMatierePremiereTable extends Migration
     public function down()
     {
         Schema::dropIfExists('approvisionnement_matiere_premiere');
+
+        Schema::table('approvisionnement_matiere_premiere', function (Blueprint $table) {
+            $table->unique(['id_approvisionnement', 'id_MP']);
+        });
     }
 }

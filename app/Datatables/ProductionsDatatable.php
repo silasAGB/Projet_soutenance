@@ -47,9 +47,6 @@ class ProductionsDatatable extends Datatable
             Column::add(__('Statut'))
                 ->data('statut'),
 
-            Column::add(__('Produit'))
-            ->data('produit.nom_produit'),
-
             Column::add()
                 ->width('20px')
                 ->actions(function (Production $production) {

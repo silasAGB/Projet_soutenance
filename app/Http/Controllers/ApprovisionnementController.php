@@ -35,16 +35,27 @@ class ApprovisionnementController extends Controller
     {
         $request->validate([
             'date_approvisionnement' => 'required|date',
-            'reference_approvisionnement' => 'required|string|max:255',
             'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP',
             'matieresPremieres.*.id_fournisseur' => 'required|exists:fournisseurs,id_fournisseur',
             'matieresPremieres.*.qte_approvisionnement' => 'required|numeric',
             'matieresPremieres.*.montant' => 'required|numeric',
         ]);
 
+
+        $dateApprovisionnement = Carbon::parse($request->date_approvisionnement);
+        $mois = $dateApprovisionnement ->format('F');
+        $annee = $dateApprovisionnement ->format('Y');
+
+        $nombreApprovisionnement = Approvisionnement::WhereYear('date_approvisionnement', $dateApprovisionnement->year)
+            ->whereMonth('date_approvisionnement', $dateApprovisionnement->month)
+            ->count() +1 ;
+
+        $reference_approvisionnement ='Approvisionnement N°'. $nombreApprovisionnement . '-' . $mois .'-' .$annee;
+
+
         $approvisionnement = Approvisionnement::create([
             'date_approvisionnement' => $request->date_approvisionnement,
-            'reference_approvisionnement' => $request->reference_approvisionnement,
+            'reference_approvisionnement' => $reference_approvisionnement,
             'statut' => 'en attente d\'approbation',
         ]);
 
@@ -148,4 +159,3 @@ class ApprovisionnementController extends Controller
         ));
     }
 }
-

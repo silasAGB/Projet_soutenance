@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Production;
 use App\Models\Produit;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ProductionController extends Controller
 {
@@ -23,21 +24,36 @@ class ProductionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'reference_production' => 'required|string|max:255',
             'id_produit' => 'required|exists:produits,id_produit',
             'date_prevue' => 'required|date',
             'qte_prevue' => 'required|numeric|min:0',
             'nbr_preparation' => 'nullable|numeric|min:0',
         ]);
 
+        // Récupérer les informations du produit
+        $produit = Produit::findOrFail($request->id_produit);
 
+        // Obtenir le mois et l'année de la date prévue
+        $datePrevue = Carbon::parse($request->date_prevue);
+        $mois = $datePrevue->format('F');
+        $annee = $datePrevue->format('Y');
+
+        // Calculer le nombre de productions déjà effectuées ce mois-ci
+        $nombreProduction = Production::whereYear('date_prevue', $datePrevue->year)
+            ->whereMonth('date_prevue', $datePrevue->month)
+            ->count() + 1;
+
+        // Générer la référence de production
+        $referenceProduction = $produit->nom_produit . ' N°' . $nombreProduction . ' - ' . $mois . ' - ' . $annee;
+
+        // Créer la nouvelle production
         Production::create([
-            'reference_production' => $request->reference_production,
+            'reference_production' => $referenceProduction,
             'id_produit' => $request->id_produit,
             'date_prevue' => $request->date_prevue,
             'qte_prevue' => $request->qte_prevue,
-            'nbr_preparation' => $request->nbr_preparation,
-            'statut' => 'En attente',
+            'nbr_preparation' => $request->nbr_preparation ?? 1,
+            'statut' => 'en attente d\'approbation ',
         ]);
 
         return redirect()->route('boilerplate.productions.gerer')->with('success', 'Production créée avec succès.');
