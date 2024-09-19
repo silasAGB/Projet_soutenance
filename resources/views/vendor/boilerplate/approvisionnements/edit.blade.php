@@ -30,9 +30,10 @@
                     <div class="form-group">
                         <label for="statut">Statut</label>
                         <select name="statut" id="statut" class="form-control" required>
-                            <option value="en_attente" {{ $approvisionnement->statut == 'en_attente' ? 'selected' : '' }}>En attente d'approvisionnement</option>
-                            <option value="valide" {{ $approvisionnement->statut == 'valide' ? 'selected' : '' }}>Terminé</option>
-                            <option value="annule" {{ $approvisionnement->statut == 'annule' ? 'selected' : '' }}>Annulé</option>
+                            <option value="en attente d\'approbation" {{ $approvisionnement->statut == 'en attente d\'approbation' ? 'selected' : '' }}>En attente d'approvisionnement</option>
+                            <option value="en attente de livraison" {{ $approvisionnement->statut == 'en attente de livraison' ? 'selected' : '' }}>en attente de livraison</option>
+                            <option value="livré" {{ $approvisionnement->statut == 'livré' ? 'selected' : '' }}>livré</option>
+                            <option value="Annulé" {{ $approvisionnement->statut == 'Annulé' ? 'selected' : '' }}>Annulé</option>
                         </select>
                     </div>
                 @endcomponent
@@ -89,75 +90,108 @@
     @push('js')
     <script>
         $(document).ready(function() {
-            let rowNumber = {{ count($approvisionnement->matieresPremieres) }};
+    let rowNumber = {{ count($approvisionnement->matieresPremieres) }};
 
-            function calculateMontant(row) {
-                const quantity = parseFloat(row.find('.quantity').val()) || 0;
-                const price = parseFloat(row.find('.fournisseurSelect option:selected').data('price')) || 0;
-                const montant = quantity * price;
-                row.find('.montant').val(montant.toFixed(2));
+    // Fonction pour désactiver les matières premières déjà sélectionnées
+    function updateMatierePremiereOptions() {
+        const selectedValues = [];
+
+        // Récupérer toutes les matières premières déjà sélectionnées
+        $('.matierePremiereSelect').each(function() {
+            const selectedValue = $(this).val();
+            if (selectedValue) {
+                selectedValues.push(selectedValue);
             }
+        });
 
-            function populateFournisseurs(row, fournisseurs) {
-                const fournisseurSelect = row.find('.fournisseurSelect');
-                fournisseurSelect.empty();
-                fournisseurSelect.append('<option value="">Sélectionner un fournisseur</option>');
-                fournisseurs.forEach(fournisseur => {
-                    fournisseurSelect.append(`<option value="${fournisseur.id_fournisseur}" data-price="${fournisseur.pivot.prix_achat}">${fournisseur.nom_fournisseur}</option>`);
-                });
-            }
-
-            $('#addRow').click(function() {
-                const newRow = `
-                    <tr>
-                        <td>
-                            <select class="form-control matierePremiereSelect" name="matieresPremieres[${rowNumber}][id_MP]" required>
-                                <option value="">Sélectionner une matière première</option>
-                                @foreach($matieresPremieres as $matierePremiere)
-                                    <option value="{{ $matierePremiere->id_MP }}" data-fournisseurs="{{ json_encode($matierePremiere->fournisseurs) }}">{{ $matierePremiere->nom_MP }}</option>
-                                @endforeach
-                            </select>
-                        </td>
-                        <td>
-                            <select class="form-control fournisseurSelect" name="matieresPremieres[${rowNumber}][id_fournisseur]" required>
-                                <option value="">Sélectionner un fournisseur</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="number" class="form-control quantity" name="matieresPremieres[${rowNumber}][qte_approvisionnement]" required>
-                        </td>
-                        <td>
-                            <input type="number" step="0.01" class="form-control montant" name="matieresPremieres[${rowNumber}][montant]" required readonly>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-danger removeRow">-</button>
-                        </td>
-                    </tr>
-                `;
-                $('#matieresPremieresTable tbody').append(newRow);
-                rowNumber++;
-            });
-
-            $(document).on('click', '.removeRow', function() {
-                $(this).closest('tr').remove();
-            });
-
-            $(document).on('input', '.quantity', function() {
-                const row = $(this).closest('tr');
-                calculateMontant(row);
-            });
-
-            $(document).on('change', '.matierePremiereSelect', function() {
-                const row = $(this).closest('tr');
-                const fournisseurs = $(this).find('option:selected').data('fournisseurs');
-                populateFournisseurs(row, fournisseurs);
-            });
-
-            $(document).on('change', '.fournisseurSelect', function() {
-                const row = $(this).closest('tr');
-                calculateMontant(row);
+        // Désactiver les matières premières déjà sélectionnées dans toutes les listes
+        $('.matierePremiereSelect').each(function() {
+            const currentSelect = $(this);
+            currentSelect.find('option').each(function() {
+                const value = $(this).val();
+                if (value) {
+                    if (selectedValues.includes(value) && currentSelect.val() !== value) {
+                        $(this).prop('disabled', true);
+                    } else {
+                        $(this).prop('disabled', false);
+                    }
+                }
             });
         });
+    }
+
+    function calculateMontant(row) {
+        const quantity = parseFloat(row.find('.quantity').val()) || 0;
+        const price = parseFloat(row.find('.fournisseurSelect option:selected').data('price')) || 0;
+        const montant = quantity * price;
+        row.find('.montant').val(montant.toFixed(2));
+    }
+
+    function populateFournisseurs(row, fournisseurs) {
+        const fournisseurSelect = row.find('.fournisseurSelect');
+        fournisseurSelect.empty();
+        fournisseurSelect.append('<option value="">Sélectionner un fournisseur</option>');
+        fournisseurs.forEach(fournisseur => {
+            fournisseurSelect.append(`<option value="${fournisseur.id_fournisseur}" data-price="${fournisseur.pivot.prix_achat}">${fournisseur.nom_fournisseur}</option>`);
+        });
+    }
+
+    $('#addRow').click(function() {
+        const newRow = `
+            <tr>
+                <td>
+                    <select class="form-control matierePremiereSelect" name="matieresPremieres[${rowNumber}][id_MP]" required>
+                        <option value="">Sélectionner une matière première</option>
+                        @foreach($matieresPremieres as $matierePremiere)
+                            <option value="{{ $matierePremiere->id_MP }}" data-fournisseurs="{{ json_encode($matierePremiere->fournisseurs) }}">{{ $matierePremiere->nom_MP }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control fournisseurSelect" name="matieresPremieres[${rowNumber}][id_fournisseur]" required>
+                        <option value="">Sélectionner un fournisseur</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="form-control quantity" name="matieresPremieres[${rowNumber}][qte_approvisionnement]" required>
+                </td>
+                <td>
+                    <input type="number" step="0.01" class="form-control montant" name="matieresPremieres[${rowNumber}][montant]" required readonly>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger removeRow">-</button>
+                </td>
+            </tr>
+        `;
+        $('#matieresPremieresTable tbody').append(newRow);
+        rowNumber++;
+        updateMatierePremiereOptions();
+    });
+
+    $(document).on('click', '.removeRow', function() {
+        $(this).closest('tr').remove();
+        updateMatierePremiereOptions();
+    });
+
+    $(document).on('input', '.quantity', function() {
+        const row = $(this).closest('tr');
+        calculateMontant(row);
+    });
+
+    $(document).on('change', '.matierePremiereSelect', function() {
+        const row = $(this).closest('tr');
+        const fournisseurs = $(this).find('option:selected').data('fournisseurs');
+        populateFournisseurs(row, fournisseurs);
+        updateMatierePremiereOptions();
+    });
+
+    $(document).on('change', '.fournisseurSelect', function() {
+        const row = $(this).closest('tr');
+        calculateMontant(row);
+    });
+
+    updateMatierePremiereOptions();
+});
     </script>
     @endpush
 @endsection
