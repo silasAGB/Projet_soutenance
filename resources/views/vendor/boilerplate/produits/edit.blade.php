@@ -69,11 +69,9 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                @endcomponent
-            </div>
-            <div class="col-md-6">
-                @component('boilerplate::card', ['color' => 'teal'])
-                    <!-- Les autres champs du produit -->
+
+            <div class="row">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="prix_details_produit">Prix de Détail</label>
                         <input type="number" id="prix_details_produit" name="prix_details_produit" class="form-control" value="{{ $produit->prix_details_produit }}" required>
@@ -81,7 +79,9 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
 
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="prix_gros_produit">Prix de Gros</label>
                         <input type="number" id="prix_gros_produit" name="prix_gros_produit" class="form-control" value="{{ $produit->prix_gros_produit }}">
@@ -89,7 +89,9 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
 
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="qte_preparation">Quantité de Préparation</label>
                         <input type="number" id="qte_preparation" name="qte_preparation" class="form-control" value="{{ $produit->qte_preparation }}">
@@ -97,7 +99,11 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
+            </div>
 
+            <div class="row">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="qte_lot">Quantité de Lot</label>
                         <input type="number" id="qte_lot" name="qte_lot" class="form-control" value="{{ $produit->qte_lot }}">
@@ -105,7 +111,9 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
 
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="qte_stock">Quantité en Stock</label>
                         <input type="number" id="qte_stock" name="qte_stock" class="form-control" value="{{ $produit->qte_stock }}" required>
@@ -113,7 +121,9 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
 
+                <div class="col-md-4">
                     <div class="form-group">
                         <label for="stock_min">Stock Minimum</label>
                         <input type="number" id="stock_min" name="stock_min" class="form-control" value="{{ $produit->stock_min }}">
@@ -121,12 +131,14 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
+            </div>
                 @endcomponent
             </div>
-        </div>
+
         <!-- Section pour les matières premières -->
-        <div class="row">
-            <div class="col-12">
+
+            <div class="col-6">
                 @component('boilerplate::card', ['color' => 'info'])
                     <div class="form-group">
                         <label for="matiere_premieres">Matières Premières</label>
