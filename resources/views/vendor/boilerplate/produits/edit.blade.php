@@ -43,21 +43,21 @@
 
                     <div class="form-group">
                         <label for="emplacement">Emplacement</label>
-                        <input type="text" id="emplacement" name="emplacement" class="form-control" value="{{ $produit->emplacement }}">
-                        @error('emplacement')
+                        <input type="text" id="Emplacement" name="Emplacement" class="form-control" value="{{ $produit->Emplacement }}">
+                        @error('Emplacement')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="id_categorie">Catégorie</label>
-                        <select id="id_categorie" name="id_categorie" class="form-control" required>
+                        <label for="id_Categorie">Catégorie</label>
+                        <select id="id_Categorie" name="id_Categorie" class="form-control" required>
                             <option value="">Sélectionnez une catégorie</option>
                             @foreach ($categories as $categorie)
-                                <option value="{{ $categorie->id_Categorie }}" {{ $categorie->id_Categorie == $produit->id_categorie ? 'selected' : '' }}>{{ $categorie->nom_Categorie }}</option>
+                                <option value="{{ $categorie->id_Categorie }}" {{ $categorie->id_Categorie == $produit->id_Categorie ? 'selected' : '' }}>{{ $categorie->nom_Categorie }}</option>
                             @endforeach
                         </select>
-                        @error('id_categorie')
+                        @error('id_Categorie')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
