@@ -72,7 +72,7 @@ public function update(Request $request, $id_produit)
         'qte_stock' => 'required|numeric',
         'stock_min' => 'nullable|numeric',
         'emplacement' => 'nullable|string',
-        'id_categorie' => 'required|exists:categories,id_categorie',
+        'id_Categorie' => 'required|exists:categories,id_Categorie',
     ]);
 
     $produit = Produit::findOrFail($id_produit);
