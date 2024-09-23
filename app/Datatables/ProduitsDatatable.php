@@ -53,7 +53,7 @@ class ProduitsDatatable extends Datatable
             ->width('20px')
             ->actions(function (Produit $produit) {
                 return join([
-                    // Button::show('produit.show', $produit),
+                    Button::show('boilerplate.produits.details', $produit->id_produit),
                     Button::edit('boilerplate.produits.edit', $produit->id_produit),
                     Button::delete('boilerplate.produits.destroy', $produit->id_produit),
                 ]);

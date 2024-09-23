@@ -111,6 +111,7 @@ Route::group([
         Route::get('produits/{id_produit}/edit', [ProduitController::class, 'edit'])->name('produits.edit');
         Route::put('produits/{id_produit}', [ProduitController::class, 'update'])->name('produits.update');
         Route::delete('produits/{id_produit}', [ProduitController::class, 'destroy'])->name('produits.destroy');
+        Route::get('details/{id_produit}', [ProduitController::class, 'show'])->name('produits.details');
 
 
 
