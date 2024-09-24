@@ -94,6 +94,11 @@ class ProductionController extends Controller
         if ($request->statut === 'Terminé') {
             $data['qte_produite'] = $request->qte_produite;
             $data['date_production'] = $request->date_production;
+
+            // Mise à jour de la quantité en stock du produit
+            $produit = Produit::findOrFail($request->id_produit);
+            $produit->qte_stock += $request->qte_produite;
+            $produit->save();
         } else {
             $data['qte_produite'] = null;
             $data['date_production'] = null;
