@@ -24,6 +24,7 @@
 
         <div class="row">
             <div class="col-lg-6">
+
                 @component('boilerplate::card', ['title' => 'Informations Produit'])
                     <div class="form-group">
                         <label for="reference_produit">Référence</label>
@@ -78,6 +79,8 @@
             <div class="col-lg-6">
                 @component('boilerplate::card', ['title' => 'Stock et Catégorie'])
 
+                <div class="row">
+
                 <div class="col-lg-6">
                 <div class="form-group">
                     <label for="emplacement">Emplacement</label>
@@ -103,9 +106,11 @@
                 </div>
             </div>
 
+        </div>
+
 
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="form-group">
                         <label for="qte_preparation">Quantité par Préparation</label>
                         <input type="number" id="qte_preparation" name="qte_preparation" class="form-control">
@@ -115,7 +120,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="form-group">
                         <label for="qte_lot">Quantité par Lot</label>
                         <input type="number" id="qte_lot" name="qte_lot" class="form-control">
@@ -124,8 +129,11 @@
                         @enderror
                     </div>
                 </div>
+            </div>
 
-                <div class="col-lg-4">
+            <div class="row">
+
+                <div class="col-lg-6">
                     <div class="form-group">
                         <label for="qte_stock">Quantité en Stock</label>
                         <input type="number" id="qte_stock" name="qte_stock" class="form-control" required>
@@ -134,9 +142,8 @@
                         @enderror
                     </div>
                 </div>
-            </div>
 
-
+                <div class="col-lg-6">
                     <div class="form-group">
                         <label for="stock_min">Stock Minimum</label>
                         <input type="number" id="stock_min" name="stock_min" class="form-control">
@@ -144,6 +151,8 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
+            </div>
 
 
                 @endcomponent
