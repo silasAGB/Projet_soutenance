@@ -56,19 +56,34 @@ class ProductionController extends Controller
             'statut' => 'en attente d\'approbation ',
         ]);
 
-        return redirect()->route('boilerplate.productions.gerer')->with('success', 'Production créée avec succès.');
+        return redirect()->route('boilerplate.productions.gerer')
+            ->with('growl', [__('Production créée avec succès.'), 'success']);
     }
 
     public function edit($id)
     {
         $production = Production::findOrFail($id);
-        $produits = Produit::all();
 
+        // Empêcher l'édition si le statut est "Terminé"
+        if ($production->statut === 'Terminé') {
+            return redirect()->route('boilerplate.productions.gerer')
+                ->with('growl', [__('Cette production est déjà terminée et ne peut plus être modifiée.'), 'danger']);
+        }
+
+        $produits = Produit::all();
         return view('boilerplate::productions.edit', compact('production', 'produits'));
     }
 
     public function update(Request $request, $id)
     {
+        $production = Production::findOrFail($id);
+
+        // Empêcher la mise à jour si le statut est "Terminé"
+        if ($production->statut === 'Terminé') {
+            return redirect()->route('boilerplate.productions.gerer')
+                ->with('growl', [__('Cette production est déjà terminée et ne peut plus être modifiée.'), 'danger']);
+        }
+
         $request->validate([
             'reference_production' => 'required|string|max:255',
             'id_produit' => 'required|exists:produits,id_produit',
@@ -79,8 +94,6 @@ class ProductionController extends Controller
             'qte_produite' => 'required_if:statut,Terminé|nullable|numeric|min:0',
             'date_production' => 'required_if:statut,Terminé|nullable|date',
         ]);
-
-        $production = Production::findOrFail($id);
 
         $data = [
             'reference_production' => $request->reference_production,
@@ -106,13 +119,22 @@ class ProductionController extends Controller
 
         $production->update($data);
 
-        return redirect()->route('boilerplate.productions.gerer')->with('success', 'Production mise à jour avec succès.');
+        return redirect()->route('boilerplate.productions.gerer')
+            ->with('growl', [__('Production mise à jour avec succès.'), 'success']);
     }
 
     public function destroy($id)
     {
         $production = Production::findOrFail($id);
+
+        // Empêcher la suppression si le statut est "Terminé"
+        if ($production->statut === 'Terminé') {
+            return redirect()->route('boilerplate.productions.gerer')
+                ->with('growl', [__('Cette production est déjà terminée et ne peut plus être supprimée.'), 'danger']);
+        }
+
         $production->delete();
-        return redirect()->route('boilerplate.productions.gerer')->with('success', 'Production supprimée avec succès.');
+        return redirect()->route('boilerplate.productions.gerer')
+            ->with('growl', [__('Production supprimée avec succès.'), 'success']);
     }
 }
