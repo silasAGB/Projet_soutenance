@@ -13,7 +13,7 @@ class Approvisionnement implements MenuItemInterface
             'permission' => 'backend',
             'active' => 'boilerplate.approvisionnements',
             'icon' => 'fa fa-truck',
-            'order' => 3,
+            'order' => 4,
         ]);
 
         $item->add('Statistique Approvisionnements', [

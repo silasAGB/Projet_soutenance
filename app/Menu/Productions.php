@@ -13,7 +13,7 @@ class Productions implements MenuItemInterface
             'permission' => 'backend',
             'active' => 'boilerplate.productions',
             'icon' => 'square',
-            'order' => 2,
+            'order' => 3,
         ]);
 
         $item->add('Statistique productions', [

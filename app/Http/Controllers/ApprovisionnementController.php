@@ -35,23 +35,19 @@ class ApprovisionnementController extends Controller
     {
         $request->validate([
             'date_approvisionnement' => 'required|date',
-            'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP',
+            'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP|distinct',
             'matieresPremieres.*.id_fournisseur' => 'required|exists:fournisseurs,id_fournisseur',
             'matieresPremieres.*.qte_approvisionnement' => 'required|numeric',
-            'matieresPremieres.*.montant' => 'required|numeric',
         ]);
 
-
         $dateApprovisionnement = Carbon::parse($request->date_approvisionnement);
-        $mois = $dateApprovisionnement ->format('F');
-        $annee = $dateApprovisionnement ->format('Y');
-
-        $nombreApprovisionnement = Approvisionnement::WhereYear('date_approvisionnement', $dateApprovisionnement->year)
+        $mois = $dateApprovisionnement->format('F');
+        $annee = $dateApprovisionnement->format('Y');
+        $nombreApprovisionnement = Approvisionnement::whereYear('date_approvisionnement', $dateApprovisionnement->year)
             ->whereMonth('date_approvisionnement', $dateApprovisionnement->month)
-            ->count() +1 ;
+            ->count() + 1;
 
-        $reference_approvisionnement ='Approvisionnement N°'. $nombreApprovisionnement . '-' . $mois .'-' .$annee;
-
+        $reference_approvisionnement = 'Approvisionnement N°' . $nombreApprovisionnement . '-' . $mois . '-' . $annee;
 
         $approvisionnement = Approvisionnement::create([
             'date_approvisionnement' => $request->date_approvisionnement,
@@ -83,10 +79,15 @@ class ApprovisionnementController extends Controller
     public function edit($id_approvisionnement)
     {
         $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->findOrFail($id_approvisionnement);
+
+        if (in_array($approvisionnement->statut, ['livré', 'Terminé'])) {
+            return redirect()->route('boilerplate.approvisionnements.gerer')
+                             ->with('growl', [__('Impossible de modifier un approvisionnement qui est déjà livré ou terminé.'), 'error']);
+        }
+
         $fournisseurs = Fournisseur::all();
         $matieresPremieres = MatierePremiere::all();
-
-        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré' , 'Annulé'];
+        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré', 'Annulé'];
 
         return view('boilerplate::approvisionnements.edit', compact('approvisionnement', 'fournisseurs', 'matieresPremieres', 'statuts'));
     }
@@ -96,13 +97,20 @@ class ApprovisionnementController extends Controller
         $request->validate([
             'date_approvisionnement' => 'required|date',
             'reference_approvisionnement' => 'required|string|max:255',
-            'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP',
+            'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP|distinct',
             'matieresPremieres.*.id_fournisseur' => 'required|exists:fournisseurs,id_fournisseur',
             'matieresPremieres.*.qte_approvisionnement' => 'required|numeric',
-            'matieresPremieres.*.montant' => 'required|numeric',
         ]);
 
         $approvisionnement = Approvisionnement::findOrFail($id_approvisionnement);
+
+        if (in_array($approvisionnement->statut, ['livré', 'Terminé'])) {
+            return redirect()->route('boilerplate.approvisionnements.gerer')
+                             ->with('error', 'Impossible de modifier un approvisionnement qui est déjà livré ou terminé.');
+        }
+
+        $ancienStatut = $approvisionnement->statut;
+
         $approvisionnement->update([
             'date_approvisionnement' => $request->date_approvisionnement,
             'reference_approvisionnement' => $request->reference_approvisionnement,
@@ -110,7 +118,6 @@ class ApprovisionnementController extends Controller
         ]);
 
         $approvisionnement->matieresPremieres()->detach();
-
         $totalMontant = 0;
 
         foreach ($request->matieresPremieres as $matiere) {
@@ -128,6 +135,16 @@ class ApprovisionnementController extends Controller
 
         $approvisionnement->update(['montant' => $totalMontant]);
 
+        // Mise à jour du stock de matières premières si le statut est "Livré"
+        if (($request->statut === 'livré' || $request->statut === 'Terminé') &&
+            ($ancienStatut !== 'livré' && $ancienStatut !== 'Terminé')) {
+            foreach ($approvisionnement->matieresPremieres as $matiere) {
+                $matierePremiere = MatierePremiere::find($matiere->pivot->id_MP);
+                $matierePremiere->qte_stock += $matiere->pivot->qte_approvisionnement;
+                $matierePremiere->save();
+            }
+        }
+
         return redirect()->route('boilerplate.approvisionnements.gerer')
                          ->with('success', 'Approvisionnement mis à jour avec succès.');
     }
@@ -135,17 +152,22 @@ class ApprovisionnementController extends Controller
     public function destroy($id_approvisionnement)
     {
         $approvisionnement = Approvisionnement::findOrFail($id_approvisionnement);
+
+        if (in_array($approvisionnement->statut, ['livré', 'Terminé'])) {
+            return redirect()->route('boilerplate.approvisionnements.gerer')
+            ->with('growl', [__('Impossible de supprimer un approvisionnement qui est déjà livré ou terminé.'), 'error']);
+        }
+
         $approvisionnement->matieresPremieres()->detach();
         $approvisionnement->delete();
 
         return redirect()->route('boilerplate.approvisionnements.gerer')
-                         ->with('success', 'Approvisionnement supprimé avec succès.');
+                         ->with('growl', [__('Approvisionnement supprimé avec succès.'), 'success']);
     }
 
     public function statistiques()
     {
         $now = Carbon::now();
-
         $approvisionnementsEnAttenteApprobation = Approvisionnement::where('statut', 'en attente d\'approbation')->count();
         $approvisionnementsEnAttenteLivraison = Approvisionnement::where('statut', 'en attente de livraison')->count();
         $approvisionnementsEffectueCeMois = Approvisionnement::whereMonth('created_at', $now->month)

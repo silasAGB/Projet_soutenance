@@ -13,7 +13,7 @@ class Stocks implements MenuItemInterface
             'permission' => 'backend',
             'active' => 'boilerplate.stocks.*',
             'icon' => 'fa fa-archive',
-            'order' => '4'
+            'order' => '5'
 
         ]);
 
