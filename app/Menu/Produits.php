@@ -11,7 +11,7 @@ class Produits implements MenuItemInterface
     {
         $item = $menu->add('Produits', [
             'permission' => 'backend',
-            'active' => 'boilerplate.dashboard',
+            'active' => 'boilerplate.produits',
             'icon' => 'square',
             'order' => 1,
         ]);

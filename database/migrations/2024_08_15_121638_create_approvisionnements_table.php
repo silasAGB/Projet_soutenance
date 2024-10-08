@@ -14,6 +14,8 @@ class CreateApprovisionnementsTable extends Migration
             $table->string('reference_approvisionnement');
             $table->string('statut');
             $table->decimal('montant', 8, 2)->default(0);
+            $table->integer('produits_recus')->nullable();
+            $table->date('date_livraison')->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,7 @@ class ApprovisionnementController extends Controller
     public function show($id_approvisionnement)
     {
         $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->findOrFail($id_approvisionnement);
-        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré'];
+        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré', 'Terminé'];
 
         return view('boilerplate::approvisionnements.details', compact('approvisionnement', 'statuts'));
     }
@@ -87,7 +87,7 @@ class ApprovisionnementController extends Controller
 
         $fournisseurs = Fournisseur::all();
         $matieresPremieres = MatierePremiere::all();
-        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré', 'Annulé'];
+        $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré', 'Terminé'];
 
         return view('boilerplate::approvisionnements.edit', compact('approvisionnement', 'fournisseurs', 'matieresPremieres', 'statuts'));
     }
@@ -135,7 +135,7 @@ class ApprovisionnementController extends Controller
 
         $approvisionnement->update(['montant' => $totalMontant]);
 
-        // Mise à jour du stock de matières premières si le statut est "Livré"
+        // Mise à jour du stock de matières premières si le statut est "Livré" ou "Terminé"
         if (($request->statut === 'livré' || $request->statut === 'Terminé') &&
             ($ancienStatut !== 'livré' && $ancienStatut !== 'Terminé')) {
             foreach ($approvisionnement->matieresPremieres as $matiere) {
@@ -155,7 +155,7 @@ class ApprovisionnementController extends Controller
 
         if (in_array($approvisionnement->statut, ['livré', 'Terminé'])) {
             return redirect()->route('boilerplate.approvisionnements.gerer')
-            ->with('growl', [__('Impossible de supprimer un approvisionnement qui est déjà livré ou terminé.'), 'error']);
+                             ->with('growl', [__('Impossible de supprimer un approvisionnement qui est déjà livré ou terminé.'), 'error']);
         }
 
         $approvisionnement->matieresPremieres()->detach();
