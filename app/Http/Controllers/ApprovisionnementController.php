@@ -140,7 +140,7 @@ class ApprovisionnementController extends Controller
             ($ancienStatut !== 'livré' && $ancienStatut !== 'Terminé')) {
             foreach ($approvisionnement->matieresPremieres as $matiere) {
                 $matierePremiere = MatierePremiere::find($matiere->pivot->id_MP);
-                $matierePremiere->qte_stock += $matiere->pivot->qte_approvisionnement;
+                $matierePremiere->qte_stock += $matiere->pivot->qte_livree;
                 $matierePremiere->save();
             }
         }

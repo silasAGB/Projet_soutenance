@@ -56,7 +56,8 @@
                     <tr>
                         <th>@lang('Matière Première')</th>
                         <th>@lang('Fournisseur')</th>
-                        <th>@lang('Quantité')</th>
+                        <th>@lang('Quantité Commandée')</th>
+                        <th>@lang('Quantité Livrée')</th> <!-- Nouvelle colonne pour la quantité livrée -->
                         <th>@lang('Montant')</th>
                     </tr>
                 </thead>
@@ -71,6 +72,7 @@
                                 {{ $fournisseur ? $fournisseur->nom_fournisseur : 'N/A' }}
                             </td>
                             <td>{{ $matierePremiere->pivot->qte_approvisionnement }} {{ $matierePremiere->unite }}</td>
+                            <td>{{ $matierePremiere->pivot->qte_livree ?? 'N/A' }} {{ $matierePremiere->unite }}</td> <!-- Afficher la quantité livrée -->
                             <td>{{ number_format($matierePremiere->pivot->montant, 2) }} FCFA</td>
                         </tr>
                     @endforeach

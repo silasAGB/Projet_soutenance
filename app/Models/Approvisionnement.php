@@ -16,8 +16,8 @@ class Approvisionnement extends Model
         'reference_approvisionnement',
         'statut',
         'montant',
-        'produits_recus',
-        'date_livraison'
+        'qte_livree',
+        'date_livraison',
     ];
 
     // Méthode pour formater le montant
@@ -42,6 +42,7 @@ class Approvisionnement extends Model
                     ->withTimestamps();
     }
 
+    // Formater la date de livraison
     public function getFormattedDateLivraisonAttribute()
     {
         return $this->date_livraison ? $this->date_livraison->format('d/m/Y') : 'Non livré';
