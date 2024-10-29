@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/boilerplate/custom.css') }}">
     @endpush
     <link rel="stylesheet" href="{{ asset('assets/vendor/boilerplate/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/custom/custom.css') }}">
 
 @stack('css')
     <script src="{{ mix('/bootstrap.min.js', '/assets/vendor/boilerplate') }}"></script>

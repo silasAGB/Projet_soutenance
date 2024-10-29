@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
         app('boilerplate.datatables')->registerDatatable(\App\Datatables\ApprovisionnementsDatatable::class);
         View::addNamespace('boilerplate', resource_path('views/vendor/boilerplate'));
         Blade::component('boilerplate::components.smallbox', 'smallbox');
-        
+
     }
 
 

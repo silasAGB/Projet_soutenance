@@ -28,19 +28,26 @@ return [
             'shadow' => 1,
         ],
         'brand'   => [
-            'bg'   => 'gray-dark',
+            'bg'   => 'white',
             'logo' => [
                 'bg'     => 'white',
-                'icon'   =>'<img src="/assets/vendor/boilerplate/images/vendor/bootstrap-fileinput/logo_fond_blanc-removebg-preview.png" width="200px" height="200px" class="shop-logo">', //'<img src="/assets/vendor/boilerplate/images/vendor/bootstrap-fileinput/logo_fond_blanc-removebg-preview.png" alt="Logo" class="navbar-logo">',
+                'icon'   =>'<img src="/assets/vendor/boilerplate/images/vendor/bootstrap-fileinput/logo_fond_blanc-removebg-preview.png" height="75px" class="shop-logo">', //'<img src="/assets/vendor/boilerplate/images/vendor/bootstrap-fileinput/logo_fond_blanc-removebg-preview.png" alt="Logo" class="navbar-logo">',
                 'text'   => '',
                 'shadow' => 2,
             ],
         ],
+
+/*
         'user'    => [
             'visible' => true,
             'shadow'  => 2,
         ],
+
+*/
     ],
+
+
+
     'footer'  => [
         'visible'    => true,
         'vendorname' => 'PAP-FAMILY',

@@ -1,11 +1,10 @@
 <aside class="main-sidebar sidebar-{{ config('boilerplate.theme.sidebar.type') }}-{{ config('boilerplate.theme.sidebar.links.bg') }} elevation-{{ config('boilerplate.theme.sidebar.shadow') }}">
     <a href="{{ route('boilerplate.dashboard') }}" class="brand-link d-flex {{ !empty(config('boilerplate.theme.sidebar.brand.bg')) ? 'bg-'.config('boilerplate.theme.sidebar.brand.bg') : ''}}">
-        <span class="brand-logo bg-{{ config('boilerplate.theme.sidebar.brand.logo.bg') }} elevation-{{ config('boilerplate.theme.sidebar.brand.logo.shadow') }} navbar-logo">
+        <span class="brand-logo bg-{{ config('boilerplate.theme.sidebar.brand.logo.bg') }}  navbar-logo">
             {!! config('boilerplate.theme.sidebar.brand.logo.icon') !!}
         </span>
-        <span class="brand-text text-truncate pr-2" title="{!! strip_tags(config('boilerplate.theme.sidebar.brand.logo.text')) !!}">{!! config('boilerplate.theme.sidebar.brand.logo.text') !!}</span>
     </a>
-    <div class="sidebar">
+    <div class="sidebar pt-4">
         @if(config('boilerplate.theme.sidebar.user.visible'))
             <div class="user-panel d-flex align-items-center">
                 <div class="image">
@@ -19,7 +18,7 @@
                 </div>
             </div>
         @endif
-        <nav class="mt-2">
+        <nav class="mt-4">
             {!! $menu !!}
         </nav>
     </div>
