@@ -50,7 +50,7 @@ class ApprovisionnementsDatatable extends Datatable
             Column::add()
                 ->width('20px')
                 ->actions(function (Approvisionnement $approvisionnement) {
-                    // Condition pour masquer le bouton de modification si l'approvisionnement est livré ou terminé
+
                     $actions = [];
 
                     $actions[] = Button::show('boilerplate.approvisionnements.details', $approvisionnement);

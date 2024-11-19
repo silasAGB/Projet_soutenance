@@ -9,17 +9,26 @@ class Commande extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id_Commande';
+    protected $primaryKey = 'id_commande';
+    protected $table = 'commandes';
 
-    protected $fillable = ['reference_Commande', 'date_Commande', 'montant', 'statut', 'adresse_livraison', 'date_livraison', 'id_Client'];
+    protected $fillable = [
+        'reference_commande',
+        'date_commande',
+        'montant',
+        'statut',
+        'adresse_livraison',
+        'date_livraison',
+        'id_client',
+    ];
 
     public function client()
     {
-        return $this->belongsTo(Client::class, 'id_Client');
+        return $this->belongsTo(Client::class, 'id_client');
     }
 
-    public function produits()
+    public function produit_commande()
     {
-        return $this->belongsToMany(Produit::class, 'produit_commande', 'id_Commande', 'id_Produit');
+        return $this->hasMany(ProduitCommande::class, 'id');
     }
 }

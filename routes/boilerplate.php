@@ -151,9 +151,16 @@ Route::group([
         // Rapport
         Route::get('rapport', [RapportController::class, 'index'])->name('rapport.index');
 
+
         // Commandes Routes
-        Route::get('commandes/statistiques', [CommandeController::class, 'statistiques'])->name('commande.statistiques');
-        Route::get('commandes/gerer', [CommandeController::class, 'index'])->name('commande.gerer');
+        Route::get('commandes/statistiques', [CommandeController::class, 'statistiques'])->name('commandes.statistiques');
+        Route::get('commandes/gerer', [CommandeController::class, 'index'])->name('commandes.gerer');
+        Route::get('commandes/create', [CommandeController::class, 'create'])->name('commandes.create');
+        Route::post('commandes/store', [CommandeController::class, 'store'])->name('commandes.store');
+        Route::get('commandes/details/{id_commande}', [CommandeController::class, 'show'])->name('commandes.details');
+        Route::get('commandes/edit/{id_commande}', [CommandeController::class, 'edit'])->name('commandes.edit');
+        Route::delete('commandes/destroy/{id_commande}', [CommandeController::class, 'destroy'])->name('commandes.destroy');
+
 
         // Approbations Routes
         Route::get('approbations/index', [ApprobationController::class, 'index'])->name('approbations.index');

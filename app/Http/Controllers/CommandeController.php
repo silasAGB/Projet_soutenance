@@ -3,88 +3,185 @@
 namespace App\Http\Controllers;
 
 use App\Models\Commande;
+use App\Models\Produit;
+use App\Models\User;
+use App\Models\ProduitCommande;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class CommandeController extends Controller
 {
-    // Méthode pour afficher toutes les commandes
     public function index()
     {
-        $commandes = Commande::all();
+        $commandes = Commande::with('client')->get();
         return view('boilerplate::commandes.gerer', compact('commandes'));
     }
 
-    // Méthode pour afficher un formulaire de création de commande
     public function create()
     {
-        return view('commandes.create');
+        $currentDate = Carbon::now();
+        $month = $currentDate->month;
+        $year = $currentDate->year;
+        $commandeCount = Commande::whereMonth('date_commande', $month)
+            ->whereYear('date_commande', $year)
+            ->count() + 1;
+        $referenceCommande = 'Commande N°' . $commandeCount . ' - ' . $month . ' - ' . $year;
+
+        $user = Auth::user();
+        $produits = Produit::all();
+        return view('boilerplate::commandes.create', compact('user', 'produits', 'referenceCommande'));
     }
 
-    // Méthode pour enregistrer une nouvelle commande
     public function store(Request $request)
     {
+
+
         $request->validate([
-            'reference_Commande' => 'required',
-            'date_Commande' => 'required',
-            'montant' => 'required',
-            'statut' => 'required',
-            'adresse_livraison' => 'required',
-            'date_livraison' => 'required',
-            'id_Client' => 'required|exists:clients,id_Client',
+            'reference_commande' => 'required|string|unique:commandes',
+            'date_commande' => 'required|date',
+            'adresse_livraison' => 'required|string',
+            'date_livraison' => 'required|date|after_or_equal:date_commande',
+            'produits' => 'required|array|min:1',
+            'produits.*.id' => 'required|exists:produits,id_produit',
+            'produits.*.qte' => 'required|integer|min:1',
         ]);
 
-        Commande::create($request->all());
+	DB::beginTransaction();
 
-        return redirect()->route('commandes.index')
-            ->with('success', 'Commande ajoutée avec succès.');
+        try {
+
+
+            $commande = Commande::create([
+                'reference_commande' => $request->reference_commande,
+                'date_commande' => $request->date_commande,
+                'montant' => 0,
+                'statut' => $request->statut ?? 'En_attente',
+                'adresse_livraison' => $request->adresse_livraison,
+                'date_livraison' => $request->date_livraison,
+                'id_client' => auth()->id(),
+            ]);
+
+		$montantTotal = 0;
+
+            foreach ($request->produits as $produitData) {
+		$produit = Produit::findOrFail($produitData['id']);
+		$montantProduit = $produit->prix_details_produit * $produitData['qte'];
+
+                ProduitCommande::create([
+                    'id_commande' => $commande->id_commande,
+                    'id_produit' => $produitData['id'],
+                    'qte_produit_commande' => $produitData['qte'],
+                    'prix_unitaire' => $produit->prix_details_produit,
+                    'montant_produit_commande' => $montantProduit,
+                ]);
+
+			$montantTotal += $montantProduit;
+            }
+
+		$commande->update(['montant' => $montantTotal]);
+
+
+
+            DB::commit();
+
+
+            return redirect()->route('boilerplate.commandes.gerer')->with('success', 'Commande et produits ajoutés avec succès.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+
+
+            return back()->withErrors(['error' => 'Erreur lors de la création de la commande: ' . $e->getMessage()]);
+        }
     }
 
-    // Méthode pour afficher les détails d'une commande spécifique
-    public function show($id)
+    public function show($id_commande)
     {
-        $commande = Commande::findOrFail($id);
-        return view('commandes.show', compact('commande'));
+        $commande = Commande::with('produit_commande.produit')->findOrFail($id_commande);
+        return view('commandes.details', compact('commande'));
     }
 
-    // Méthode pour afficher le formulaire de modification d'une commande
-    public function edit($id)
+    public function edit($id_commande)
     {
-        $commande = Commande::findOrFail($id);
-        return view('commandes.edit', compact('commande'));
+        $commande = Commande::with('produit_commande')->findOrFail($id_commande);
+        if (!$commande) {
+            return redirect()->route('boilerplate.commandes.gerer')
+                ->with('error', 'Commande introuvable.');
+        }
+        $produits = Produit::all();
+        $clients = User::all();
+        return view('boilerplate::commandes.edit', compact('commande', 'produits', 'clients'));
     }
 
-    // Méthode pour mettre à jour une commande
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_commande)
     {
+
+        $commande = Commande::findOrFail($id_commande);
+
         $request->validate([
-            'reference_Commande' => 'required',
-            'date_Commande' => 'required',
-            'montant' => 'required',
-            'statut' => 'required',
-            'adresse_livraison' => 'required',
-            'date_livraison' => 'required',
-            'id_Client' => 'required|exists:clients,id_Client',
+            'adresse_livraison' => 'required|string',
+            'date_livraison' => 'required|date|after_or_equal:date_commande',
+            'produits' => 'required|array|min:1',
+            'produits.*.id' => 'required|exists:produits,id_produit',
+            'produits.*.qte' => 'required|integer|min:1',
+            'id_client' => 'required|exists:users,id',
         ]);
 
-        $commande = Commande::findOrFail($id);
-        $commande->update($request->all());
+	DB::beginTransaction();
 
-        return redirect()->route('commandes.index')
-            ->with('success', 'Commande mise à jour avec succès.');
+        try {
+
+            $commande->update([
+                'adresse_livraison' => $request->adresse_livraison,
+                'date_livraison' => $request->date_livraison,
+            ]);
+
+            // Supprimer les anciens produits associés
+            $commande->produit_commande()->delete();
+
+            $montantTotal = 0;
+
+            // Réajouter les nouveaux produits
+            foreach ($request->produits as $produitData) {
+                $produit = Produit::findOrFail($produitData['id']);
+                $montantProduit = $produit->prix_details_produit * $produitData['qte'];
+
+                ProduitCommande::create([
+                    'id_commande' => $commande->id_commande,
+                    'id_produit' => $produitData['id'],
+                    'qte_produit_commande' => $produitData['qte'],
+                    'prix_unitaire' => $produit->prix_details_produit,
+                    'montant_produit_commande' => $montantProduit,
+                ]);
+
+                $montantTotal += $montantProduit;
+            }
+
+            $commande->update(['montant' => $montantTotal]);
+
+            DB::commit();
+
+            return redirect()->route('boilerplate::commandes.gerer')->with('success', 'Commande mise à jour avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Erreur lors de la mise à jour de la commande : ' . $e->getMessage()]);
+        }
     }
 
-    // Méthode pour supprimer une commande
-    public function destroy($id)
+    // Supprimer une commande
+    public function destroy($id_commande)
     {
-        $commande = Commande::findOrFail($id);
-        $commande->delete();
+        $commande = Commande::findOrFail($id_commande);
 
-        return redirect()->route('commandes.index')
-            ->with('success', 'Commande supprimée avec succès.');
-    }
-
-    public function statistiques()
-    {
-        return view('boilerplate::commandes.statistiques');
+        try {
+            $commande->delete();
+            return redirect()->route('commandes.gerer')->with('success', 'Commande supprimée avec succès.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Erreur lors de la suppression de la commande : ' . $e->getMessage()]);
+        }
     }
 }
+

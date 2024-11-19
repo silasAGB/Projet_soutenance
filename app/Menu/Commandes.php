@@ -11,21 +11,21 @@ class Commandes implements MenuItemInterface
     {
         $item = $menu->add('Commandes', [
             'permission' => 'backend',
-            'active' => 'boilerplate.commande',
+            'active' => 'boilerplate.commandes',
             'icon' => 'fa fa-shopping-cart',
             'order' => 2,
         ]);
 
         $item->add('Statistiques commandes', [
             'permission' => 'backend',
-            'active' => 'boilerplate.commande.statistiques',
-            'route' => 'boilerplate.commande.statistiques',
+            'active' => 'boilerplate.commandes.statistiques',
+            'route' => 'boilerplate.commandes.statistiques',
         ]);
 
         $item->add('Gerer commandes', [
             'permission' => 'backend',
-            'active' => 'boilerplate.commande.gerer',
-            'route' => 'boilerplate.commande.gerer',
+            'active' => 'boilerplate.commandes.gerer',
+            'route' => 'boilerplate.commandes.gerer',
         ]);
     }
 }

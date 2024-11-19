@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-12 mbl">
         <span class="float-right pb-3">
-            <a href="{{ route("boilerplate.categories.create") }}" class="btn btn-primary">
+            <a href="{{ route("boilerplate.commandes.create") }}" class="btn btn-primary">
                 @lang('Placer une commande')
             </a>
         </span>

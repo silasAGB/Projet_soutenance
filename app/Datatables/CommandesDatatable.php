@@ -27,11 +27,11 @@ class CommandesDatatable extends Datatable
         return [
 
             Column::add(__('Reference'))
-                ->data('reference_Commande'),
+                ->data('reference_commande'),
 
             Column::add(__('Date'))
                 ->width('180px')
-                ->data('date_Commande')
+                ->data('date_commande')
                 ->dateFormat(__("boilerplate::date.Ymd")),
 
             Column::add(__('Montant'))
@@ -48,28 +48,32 @@ class CommandesDatatable extends Datatable
                 ->data('date_livraison')
                 ->dateFormat(__("boilerplate::date.Ymd")),
 
-            Column::add(__('Id Client'))
-                ->data('id_Client'),
+            Column::add(__('Client'))
+                ->data('id_client'),
 
-            Column::add(__('Created At'))
-                ->width('180px')
-                ->data('created_at')
-                ->dateFormat(),
-
-            Column::add(__('Updated At'))
-                ->width('180px')
-                ->data('updated_at')
-                ->dateFormat(),
 
             Column::add()
                 ->width('20px')
                 ->actions(function (Commande $commande) {
-                    return join([
+
+                    $actions = [];
+
+                    $actions[] = Button::show('boilerplate.commandes.details', $commande);
+
+                    if (!in_array($commande->statut, ['livré', 'Terminé'])) {
+                        $actions[] = Button::edit('boilerplate.commandes.edit', $commande);
+                    }
+
+                    if (!in_array($commande->statut, ['livré', 'Terminé'])) {
+                        $actions[] = Button::delete('boilerplate.commandes.destroy', $commande);
+                    }
+
+                    return join($actions
                         // Button::show('commande.show', $commande),
                         // Button::edit('commande.edit', $commande),
                         // Button::delete('commande.destroy', $commande),
-                    ]);
+                    );
                 }),
-        ];
+            ];
     }
 }

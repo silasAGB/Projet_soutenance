@@ -14,7 +14,7 @@ return [
     'logs'              => true,
 
     // When set to true, allows admins to view the site as a user of their choice
-    'allowImpersonate'  => true,
+    'allowImpersonate'  => false,
 
     // Allows to generate text with ChatGPT in TinyMCE
     'openai'   => [
