@@ -81,6 +81,17 @@
                     @endcomponent
 
                     <div class="form-group">
+                        <label for="id_client">Client</label>
+                        <select id="id_client" name="id_client" class="form-control">
+                            <option value="">Aucun (Utilisateur actuel)</option>
+                            @foreach($clients as $client)
+                                <option value="{{ $client->id_client }}">{{ $client->nom_client }} {{ $client->prenom_client }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
                         <label for="utilisateur">Utilisateur</label>
                         <input type="text" class="form-control" id="utilisateur" name="utilisateur" value="{{ $user->name }}" readonly>
                     </div>

@@ -23,8 +23,13 @@ class CreateCommandesTable extends Migration
             $table->date('date_livraison');
             $table->timestamps();
 
-            $table->unsignedBigInteger('id_client');
-            $table->foreign('id_client')->references('id_client')->on('clients')->onDelete('cascade');
+            // Client associé à la commande (peut être null si aucun client n'est sélectionné)
+            $table->unsignedBigInteger('id_client')->nullable();
+            $table->foreign('id_client')->references('id_client')->on('clients')->onDelete('set null');
+
+            // Utilisateur connecté qui effectue la commande
+            $table->unsignedBigInteger('id_utilisateur');
+            $table->foreign('id_utilisateur')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -35,6 +40,11 @@ class CreateCommandesTable extends Migration
      */
     public function down()
     {
+        Schema::table('commandes', function (Blueprint $table) {
+            $table->dropForeign(['id_client']);
+            $table->dropForeign(['id_utilisateur']);
+        });
+
         Schema::dropIfExists('commandes');
     }
 }

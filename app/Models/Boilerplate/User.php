@@ -55,6 +55,8 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
+
+
     /**
      * Send the password reset notification.
      *
@@ -173,6 +175,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return false;
     }
 
+
+
     /**
      * Return current user avatar uri.
      *
@@ -248,4 +252,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $setting;
     }
+
+
 }

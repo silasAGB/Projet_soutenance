@@ -4,74 +4,108 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
-    // Méthode pour afficher tous les clients
+    // Afficher tous les clients
     public function index()
     {
-        $clients = Client::all();
-        return view('clients.index', compact('clients'));
+        $clients = Client::withCount('commandes')->get();
+        return view('boilerplate::commandes.client', compact('clients'));
     }
 
-    // Méthode pour afficher un formulaire de création de client
+    // Afficher le formulaire de création
     public function create()
     {
-        return view('clients.create');
+        return view('boilerplate::commandes.createclient');
     }
 
-    // Méthode pour enregistrer un nouveau client
+    // Enregistrer un nouveau client
     public function store(Request $request)
     {
-        $request->validate([
-            'nom_Client' => 'required',
-            'contact_Client' => 'required',
-            'adresse_Client' => 'required',
+        $validatedData = $request->validate([
+            'nom_client' => 'required|string|max:255',
+            'prenom_client' => 'required|string|max:255',
+            'date_naissance' => 'nullable|date',
+            'sexe' => 'required|string|in:M,F,N',
+            'mail_client' => 'required|email|unique:clients',
+            'contact_client' => 'required|string|unique:clients|max:20',
+            'adresse_client' => 'required|string|max:255',
+            'nom_entreprise' => 'nullable|string|max:255',
+            'poste_occupe' => 'nullable|string|max:255',
+            'type_entreprise' => 'nullable|string|max:255',
+            'secteur_activite' => 'nullable|string|max:255',
+            'num_identification_fiscale' => 'nullable|string|max:50',
+            'num_registre_commerce' => 'nullable|string|max:50',
         ]);
 
-        Client::create($request->all());
-
-        return redirect()->route('clients.index')
-            ->with('success', 'Client ajouté avec succès.');
+        try {
+            Client::create(array_merge($validatedData, [
+                'statut' => 'actif',
+                'date_inscription' => now(),
+            ]));
+            return redirect()->route('boilerplate.commandes.client')->with('success', 'Client créé avec succès.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Erreur lors de la création du client : ' . $e->getMessage()]);
+        }
     }
 
-    // Méthode pour afficher les détails d'un client spécifique
-    public function show($id)
+    // Afficher les détails d'un client
+    public function show($id_client)
     {
-        $client = Client::findOrFail($id);
-        return view('clients.show', compact('client'));
+        $client = Client::with('commandes')->findOrFail($id_client);
+        return view('boilerplate::commandes.detailsclient', compact('client'));
     }
 
-    // Méthode pour afficher le formulaire de modification d'un client
-    public function edit($id)
+    // Afficher le formulaire d'édition
+    public function edit($id_client)
     {
-        $client = Client::findOrFail($id);
-        return view('clients.edit', compact('client'));
+        $client = Client::findOrFail($id_client);
+        return view('boilerplate::commandes.editclient', compact('client'));
     }
 
-    // Méthode pour mettre à jour un client
-    public function update(Request $request, $id)
+    // Mettre à jour un client
+    public function update(Request $request, $id_client)
     {
-        $request->validate([
-            'nom_Client' => 'required',
-            'contact_Client' => 'required',
-            'adresse_Client' => 'required',
+        $client = Client::findOrFail($id_client);
+
+        $validatedData = $request->validate([
+            'nom_client' => 'required|string|max:255',
+            'prenom_client' => 'required|string|max:255',
+            'date_naissance' => 'nullable|date',
+            'sexe' => 'required|string|in:M,F,N',
+            'mail_client' => 'required|email|unique:clients,mail_client,' . $client->id_client . ',id_client',
+            'contact_client' => 'required|string|max:20|unique:clients,contact_client,' . $client->id_client . ',id_client',
+            'adresse_client' => 'required|string|max:255',
+            'nom_entreprise' => 'nullable|string|max:255',
+            'poste_occupe' => 'nullable|string|max:255',
+            'type_entreprise' => 'nullable|string|max:255',
+            'secteur_activite' => 'nullable|string|max:255',
+            'num_identification_fiscale' => 'nullable|string|max:50',
+            'num_registre_commerce' => 'nullable|string|max:50',
+            'statut' => 'required|string|in:actif,suspendu',
         ]);
 
-        $client = Client::findOrFail($id);
-        $client->update($request->all());
-
-        return redirect()->route('clients.index')
-            ->with('success', 'Client mis à jour avec succès.');
+        try {
+            $client->update($validatedData);
+            return redirect()->route('boilerplate.commandes.client')->with('success', 'Client mis à jour avec succès.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Erreur lors de la mise à jour du client : ' . $e->getMessage()]);
+        }
     }
 
-    // Méthode pour supprimer un client
-    public function destroy($id)
+    // Supprimer un client
+    public function destroy($id_client)
     {
-        $client = Client::findOrFail($id);
-        $client->delete();
+        $client = Client::findOrFail($id_client);
 
-        return redirect()->route('clients.index')
-            ->with('success', 'Client supprimé avec succès.');
+        try {
+            $client->delete();
+            return redirect()->route('boilerplate.commandes.client')->with('success', 'Client supprimé avec succès.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Erreur lors de la suppression du client : ' . $e->getMessage()]);
+        }
     }
 }

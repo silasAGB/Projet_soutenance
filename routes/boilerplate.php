@@ -25,6 +25,7 @@ use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\MatierePremieresStockController;
 use App\Http\Controllers\ProduitStockController;
 use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\ClientController;
 use Illuminate\Support\Facades\Route;
 use App\Menu\Rapport;
 
@@ -160,6 +161,15 @@ Route::group([
         Route::get('commandes/details/{id_commande}', [CommandeController::class, 'show'])->name('commandes.details');
         Route::get('commandes/edit/{id_commande}', [CommandeController::class, 'edit'])->name('commandes.edit');
         Route::delete('commandes/destroy/{id_commande}', [CommandeController::class, 'destroy'])->name('commandes.destroy');
+
+        // Client
+        Route::get('clients', [ClientController::class, 'index'])->name('commandes.client');
+        Route::get('createclients', [ClientController::class, 'create'])->name('commandes.createclient');
+        Route::post('client/store', [ClientController::class, 'store'])->name('client.store');
+        Route::get('show/{id_client}', [ClientController::class, 'show'])->name('client.show');
+        Route::get('editclient/{id_client}', [ClientController::class, 'edit'])->name('commandes.editclient');
+        Route::put('update/{id_client}', [ClientController::class, 'update'])->name('client.update');
+        Route::delete('destroy/{id_client}', [ClientController::class, 'destroy'])->name('client.destroy');
 
 
         // Approbations Routes
