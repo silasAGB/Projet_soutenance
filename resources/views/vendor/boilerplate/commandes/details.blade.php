@@ -38,7 +38,7 @@
                 </span>
             </div>
             <div class="mb-3">
-                <strong>@lang('Montant total') :</strong> {{ number_format($commande->montant, 2, ',', ' ') }} €
+                <strong>@lang('Montant total') :</strong> {{ number_format($commande->montant, 2, ',', ' ') }} FCFA
             </div>
         @endcomponent
     </div>
@@ -54,6 +54,10 @@
             <div class="mb-3">
                 <strong>@lang('Client') :</strong>
                 {{ $commande->client ? $commande->client->nom_client . ' ' . $commande->client->prenom_client : __('Non spécifié') }}
+            </div>
+            <div class="mb-3">
+                <strong>@lang('Utilisateur responsable') :</strong>
+                {{ $commande->utilisateur ? $commande->utilisateur->name : __('Non spécifié') }}
             </div>
         @endcomponent
     </div>
@@ -75,16 +79,16 @@
                     @foreach($commande->produit_commande as $produitCommande)
                         <tr>
                             <td>{{ $produitCommande->produit->nom_produit }}</td>
-                            <td>{{ number_format($produitCommande->prix_unitaire, 2, ',', ' ') }} €</td>
+                            <td>{{ number_format($produitCommande->prix_unitaire, 2, ',', ' ') }} FCFA</td>
                             <td>{{ $produitCommande->qte_produit_commande }}</td>
-                            <td>{{ number_format($produitCommande->montant_produit_commande, 2, ',', ' ') }} €</td>
+                            <td>{{ number_format($produitCommande->montant_produit_commande, 2, ',', ' ') }} FCFA</td>
                         </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
                     <tr>
                         <th colspan="3">@lang('Total')</th>
-                        <th>{{ number_format($commande->montant, 2, ',', ' ') }} €</th>
+                        <th>{{ number_format($commande->montant, 2, ',', ' ') }} FCFA</th>
                     </tr>
                 </tfoot>
             </table>

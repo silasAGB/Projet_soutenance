@@ -3,6 +3,7 @@
 namespace App\Datatables;
 
 use App\Models\Commande;
+use App\Models\Client;
 use Sebastienheyd\Boilerplate\Datatables\Button;
 use Sebastienheyd\Boilerplate\Datatables\Column;
 use Sebastienheyd\Boilerplate\Datatables\Datatable;
@@ -13,7 +14,9 @@ class CommandesDatatable extends Datatable
 
     public function datasource()
     {
-        return Commande::query();
+        return Commande::with('client')
+        ->selectRaw('commandes.*, CONCAT(COALESCE(clients.nom_client, ""), " ", COALESCE(clients.prenom_client, "")) as client_name')
+        ->leftJoin('clients', 'commandes.id_client', '=', 'clients.id_client');
     }
 
     public function setUp()
@@ -48,8 +51,9 @@ class CommandesDatatable extends Datatable
                 ->data('date_livraison')
                 ->dateFormat(__("boilerplate::date.Ymd")),
 
-            Column::add(__('Client'))
-                ->data('id_client'),
+                Column::add(__('Client'))
+                ->data('client_name')
+                ->name('client_name'),
 
 
             Column::add()

@@ -160,6 +160,7 @@ Route::group([
         Route::post('commandes/store', [CommandeController::class, 'store'])->name('commandes.store');
         Route::get('commandes/details/{id_commande}', [CommandeController::class, 'show'])->name('commandes.details');
         Route::get('commandes/edit/{id_commande}', [CommandeController::class, 'edit'])->name('commandes.edit');
+        Route::put('commandes/update/{id_commande}', [CommandeController::class, 'update'])->name('commandes.update');
         Route::delete('commandes/destroy/{id_commande}', [CommandeController::class, 'destroy'])->name('commandes.destroy');
 
         // Client

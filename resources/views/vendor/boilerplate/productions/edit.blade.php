@@ -23,6 +23,17 @@
                 </div>
             </div>
 
+            <!-- Alerte de stock insuffisant -->
+        <div class="alert alert-warning" id="stock-alert" style="display: none;">
+            <strong>Attention !</strong> Certaines matières premières sont insuffisantes pour cette production.
+        </div>
+        <!-- Bouton de redirection vers les approvisionnements -->
+        <div class="text-right mb-3" id="approvisionnement-btn" style="display: none;">
+            <a href="{{ route('boilerplate.approvisionnements.gerer') }}" class="btn btn-danger">
+                Programmer des approvisionnements
+            </a>
+        </div>
+
 
             <div class="row">
 
@@ -115,13 +126,19 @@
                 /**
                  * Fonction pour mettre à jour la liste des matières premières nécessaires.
                  */
+
+
+
                 function updateMatieresPremieres() {
                     const matieresPremieres = $('#id_produit').find('option:selected').data('matieres-premieres');
                     const unites = $('#id_produit').find('option:selected').data('unites');
-                    const nbPreparations = parseInt($('#nbr_preparation').val()) || 0;
+                    const nbPreparations = parseInt($('#nbr_preparation').val()) || 1;
+
+
 
                     const matieresPremieresList = $('#matieres-premieres-list');
                     matieresPremieresList.empty();
+
 
                     for (const [matiere, quantite] of Object.entries(matieresPremieres)) {
                         const totalQuantite = quantite * nbPreparations;

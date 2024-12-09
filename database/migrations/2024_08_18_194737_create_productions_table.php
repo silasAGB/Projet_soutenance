@@ -12,10 +12,15 @@ class CreateProductionsTable extends Migration
             $table->id('id_production');
             $table->string('reference_production')->unique();
             $table->date('date_prevue');
+            $table->time('heure_prevue')->nullable();
             $table->integer('qte_prevue');
             $table->integer('qte_produite')->nullable();
             $table->integer('nbr_preparation');
             $table->date('date_production')->nullable();
+            $table->time('heure_production')->nullable();
+            $table->string('nom_personnel')->nullable();
+            $table->text('consignes_specifiques')->nullable();
+            $table->text('autres_remarques')->nullable();
             $table->float('montant_produit')->nullable();
             $table->string('statut');
             $table->timestamps();

@@ -44,10 +44,10 @@ class ProduitsDatatable extends Datatable
             ->data('qte_stock'),
 
         Column::add(__('Emplacement'))
-            ->data('Emplacement'),
+            ->data('emplacement'),
 
         Column::add(__('Categorie'))
-            ->data('categorie.nom_Categorie'),
+            ->data('categorie.nom_categorie'),
 
         Column::add()
             ->width('20px')

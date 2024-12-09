@@ -26,13 +26,13 @@
             <div class="col-lg-6">
 
                 @component('boilerplate::card', ['title' => 'Informations Produit'])
-                    <div class="form-group">
-                        <label for="reference_produit">Référence</label>
-                        <input type="text" id="reference_produit" name="reference_produit" class="form-control" required>
-                        @error('reference_produit')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
+                <div class="form-group">
+                    <label for="reference_produit">Référence (générée automatiquement)</label>
+                    <input type="text" id="reference_produit" name="reference_produit" class="form-control" disabled>
+                    @error('reference_produit')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
 
                     <div class="form-group">
                         <label for="nom_produit">Nom</label>

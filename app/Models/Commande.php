@@ -19,7 +19,7 @@ class Commande extends Model
         'statut',
         'adresse_livraison',
         'date_livraison',
-        'id_client',    
+        'id_client',
         'id_utilisateur',
     ];
 
@@ -41,7 +41,6 @@ class Commande extends Model
     {
         return $this->belongsTo(Client::class, 'id_client')->withDefault();
     }
-
     // Relation avec l'utilisateur ayant créé la commande
     public function utilisateur()
     {
@@ -56,7 +55,7 @@ class Commande extends Model
 
     public function produit_commande()
     {
-        return $this->hasMany(ProduitCommande::class, 'id_commande');
+        return $this->hasMany(ProduitCommande::class, 'id_commande', 'id_commande');
     }
 
 

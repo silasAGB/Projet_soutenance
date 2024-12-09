@@ -14,13 +14,18 @@ class Production extends Model
     protected $fillable = [
         'reference_production',
         'date_prevue',
+        'heure_prevue',
         'qte_prevue',
         'qte_produite',
+        'nbr_preparation',
         'date_production',
+        'heure_production',
+        'nom_personnel',
+        'consignes_specifiques',
+        'autres_remarques',
         'montant_produit',
         'statut',
-        'nbr_preparation',
-        'id_produit'
+        'id_produit',
     ];
 
     public function produit()

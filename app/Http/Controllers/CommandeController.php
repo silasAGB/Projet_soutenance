@@ -116,7 +116,8 @@ public function edit($id_commande)
             ->with('error', 'Commande introuvable.');
     }
     $produits = Produit::all();
-    $clients = User::all();
+    $clients = Client::all();
+    $user = Auth::user();
     return view('boilerplate::commandes.edit', compact('commande', 'produits', 'clients'));
 }
 
@@ -178,7 +179,7 @@ DB::beginTransaction();
 // Supprimer une commande
 public function destroy($id_commande)
 {
-    $commande = Commande::findOrFail($id_commande);
+    $commande = Commande::with('produits.produit')->findOrFail($id_commande);
 
     try {
         $commande->delete();
