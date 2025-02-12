@@ -19,20 +19,14 @@ class Stocks implements MenuItemInterface
 
         $item->add('Catégorie', [
             'permission' => 'backend',
-            'active' => 'boilerplate.categories.index',
+            'active' => ['boilerplate.categories.index','boilerplate.categories.create','boilerplate.categories.edit'],
             'route' => 'boilerplate.categories.index',
         ]);
 
-        $item->add('Matieres premiers', [
+        $item->add('Matières premières', [
             'permission' => 'backend',
-            'active' => 'boilerplate.matierepremieres.index',
+            'active' => ['boilerplate.matierepremieres.index','boilerplate.matierepremieres.mouvements','boilerplate.matierepremieres.create','boilerplate.matierepremieres.edit'],
             'route' => 'boilerplate.matierepremieres.index',
-        ]);
-
-        $item->add('Produits', [
-            'permission' => 'backend',
-            'active' => 'boilerplate.produits.index',
-            'route' => 'boilerplate.produits.index',
         ]);
 
     }

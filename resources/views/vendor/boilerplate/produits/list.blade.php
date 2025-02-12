@@ -11,6 +11,9 @@
 @section('content')
 <div class="row">
     <div class="col-12 mbl">
+        <a href="{{ route("boilerplate.produits.mouvements") }}" class="btn btn-primary">
+            @lang('Historiques')
+        </a>
         <span class="float-right pb-3">
             <a href="{{ route("boilerplate.produits.create") }}" class="btn btn-primary">
                 @lang('Ajouter un produits')

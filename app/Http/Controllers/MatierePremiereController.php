@@ -6,6 +6,7 @@ use App\Models\MatierePremiere;
 use App\Models\Categorie;
 use App\Models\Fournisseur;
 use Illuminate\Http\Request;
+use App\Models\MouvementMp;
 
 class MatierePremiereController extends Controller
 {
@@ -85,4 +86,29 @@ class MatierePremiereController extends Controller
         return redirect()->route('boilerplate.matierepremieres.index')
             ->with('success', 'Matière première supprimée avec succès.');
     }
+
+
+    public function miseAJourStock($id, $quantité, $type)
+{
+    $matierePremiere = MatierePremiere::findOrFail($id);
+
+    if ($type === 'entrée') {
+        $matierePremiere->qte_stock += $quantité;
+    } elseif ($type === 'sortie') {
+        $matierePremiere->qte_stock -= $quantité;
+    }
+
+    $matierePremiere->save();
+
+    // Enregistrer le mouvement
+    MouvementMp::create([
+        'id_MP' => $matierePremiere->id,
+        'type' => $type,
+        'quantité' => $quantité,
+        'stock_disponible' => $matierePremiere->qte_stock,
+        'date_mouvement' => now(),
+    ]);
+
+    return redirect()->back()->with('success', 'Stock mis à jour avec succès');
+}
 }

@@ -38,8 +38,11 @@
                             <option value="">@lang('Sélectionnez une unité')</option>
                             <option value="kg" {{ old('unite', $matierePremiere->unite) == 'kg' ? 'selected' : '' }}>Kg</option>
                             <option value="l" {{ old('unite', $matierePremiere->unite) == 'l' ? 'selected' : '' }}>L</option>
-                            <option value="g" {{ old('unite', $matierePremiere->unite) == 'g' ? 'selected' : '' }}>G</option>
+                            <option value="g" {{ old('unite', $matierePremiere->unite) == 'g' ? 'selected' : '' }}>g</option>
                             <option value="ml" {{ old('unite', $matierePremiere->unite) == 'ml' ? 'selected' : '' }}>mL</option>
+                            <option value="Boite" {{ old('unite', $matierePremiere->unite) == 'Boite' ? 'selected' : '' }}>Boites</option>
+                            <option value="Boite" {{ old('unite', $matierePremiere->unite) == 'Boite' ? 'selected' : '' }}>Bouchons</option>
+                            <option value="Emballage" {{ old('unite', $matierePremiere->unite) == 'Emballage' ? 'selected' : '' }}>Emballages</option>
 
                         </select>
                         @error('unite')
@@ -141,7 +144,7 @@
                 document.getElementById('fournisseurs').appendChild(fournisseurGroup);
                 fournisseurCount++;
 
-                
+
                 fournisseurGroup.querySelector('.remove-fournisseur').addEventListener('click', function () {
                     fournisseurGroup.remove();
                 });

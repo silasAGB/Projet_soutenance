@@ -22,9 +22,9 @@ class Productions implements MenuItemInterface
             'route' => 'boilerplate.productions.statistiques',
         ]);
 
-        $item->add('Gerer Productions', [
+        $item->add('Gérer Productions', [
             'permission' => 'backend',
-            'active' => 'boilerplate.productions.gerer',
+            'active' => ['boilerplate.productions.gerer','boilerplate.productions.create','boilerplate.productions.show','boilerplate.productions.edit'],
             'route' => 'boilerplate.productions.gerer',
         ]);
     }

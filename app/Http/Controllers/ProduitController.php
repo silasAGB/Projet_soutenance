@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categorie;
 use App\Models\Produit;
+use App\Models\MouvementProduit;
 use Illuminate\Http\Request;
 use App\Models\MatierePremiere;
 
@@ -28,11 +29,7 @@ class ProduitController extends Controller
             'description_produit' => 'nullable',
             'prix_details_produit' => 'required|numeric',
             'prix_gros_produit' => 'nullable|numeric',
-            'qte_preparation' => 'nullable|numeric',
-            'qte_lot' => 'nullable|numeric',
             'qte_stock' => 'required|numeric',
-            'stock_min' => 'nullable|numeric',
-            'emplacement' => 'nullable|string',
             'id_Categorie' => 'required|exists:categories,id_Categorie',
         ]);
 
@@ -42,7 +39,6 @@ class ProduitController extends Controller
         $lastProduit = Produit::where('id_Categorie', $request->id_Categorie)
             ->orderBy('id_produit', 'desc')
             ->first();
-
         $numero = $lastProduit ? intval(substr($lastProduit->reference_produit, 4)) + 1 : 1;
         $referenceProduit = $prefix . str_pad($numero, 3, '0', STR_PAD_LEFT);
 
@@ -50,6 +46,15 @@ class ProduitController extends Controller
         $produit = new Produit($request->all());
         $produit->reference_produit = $referenceProduit;
         $produit->save();
+
+        // Enregistrer le mouvement de stock
+        MouvementProduit::create([
+            'id_produit' => $produit->id_produit,
+            'type' => 'entrée',
+            'quantité' => $produit->qte_stock,
+            'stock_disponible' => $produit->qte_stock,
+            'date_mouvement' => now(),
+        ]);
 
         return redirect()->route('boilerplate.produits.index')
             ->with('success', 'Produit ajouté avec succès.');
@@ -72,45 +77,77 @@ class ProduitController extends Controller
     }
 
     public function update(Request $request, $id_produit)
-    {
-        $request->validate([
-            'nom_produit' => 'required',
-            'description_produit' => 'nullable',
-            'prix_details_produit' => 'required|numeric',
-            'prix_gros_produit' => 'nullable|numeric',
-            'qte_preparation' => 'nullable|numeric',
-            'qte_lot' => 'nullable|numeric',
-            'qte_stock' => 'required|numeric',
-            'stock_min' => 'nullable|numeric',
-            'emplacement' => 'nullable|string',
-            'id_Categorie' => 'required|exists:categories,id_Categorie',
-        ]);
+{
+    $request->validate([
+        'nom_produit' => 'required',
+        'description_produit' => 'nullable',
+        'prix_details_produit' => 'required|numeric',
+        'prix_gros_produit' => 'nullable|numeric',
+        'qte_stock' => 'required|numeric',
+        'id_Categorie' => 'required|exists:categories,id_Categorie',
+    ]);
 
-        $produit = Produit::findOrFail($id_produit);
-        $produit->update($request->all());
+    $produit = Produit::findOrFail($id_produit);
+    $ancienStock = $produit->qte_stock;
 
-        $matieresPremieres = $request->input('matieres_premieres', []);
-        $quantites = $request->input('quantites', []);
+    // Mettre à jour les informations du produit
+    $produit->update($request->all());
 
-        $syncData = [];
-        foreach ($matieresPremieres as $index => $matierePremiereId) {
-            if (!empty($quantites[$index])) {
-                $syncData[$matierePremiereId] = ['qte' => $quantites[$index]];
-            }
+    // Mettre à jour les mouvements de stock uniquement si le stock a changé
+    if ($produit->qte_stock !== $ancienStock) {
+        $mouvementType = $produit->qte_stock > $ancienStock ? 'entrée' : 'sortie';
+        $quantiteMouvement = abs($produit->qte_stock - $ancienStock);
+
+        // Vérifier si la quantité à enregistrer est supérieure à 0
+        if ($quantiteMouvement > 0) {
+            MouvementProduit::create([
+                'id_produit' => $produit->id_produit,
+                'type' => $mouvementType,
+                'quantité' => $quantiteMouvement,
+                'stock_disponible' => $produit->qte_stock,
+                'date_mouvement' => now(),
+            ]);
         }
-
-        $produit->matierePremieres()->sync($syncData);
-
-        return redirect()->route('boilerplate.produits.index')
-            ->with('success', 'Produit mis à jour avec succès.');
     }
 
-    public function destroy($id_produit)
-    {
-        $produit = Produit::findOrFail($id_produit);
-        $produit->delete();
+    // Synchroniser les matières premières
+    $matieresPremieres = $request->input('matieres_premieres', []);
+    $quantites = $request->input('quantites', []);
+    $syncData = [];
+    foreach ($matieresPremieres as $index => $matierePremiereId) {
+        if (!empty($quantites[$index])) {
+            $syncData[$matierePremiereId] = ['qte' => $quantites[$index]];
+        }
+    }
+    $produit->matierePremieres()->sync($syncData);
 
-        return redirect()->route('boilerplate.produits.index')
-            ->with('success', 'Produit supprimé avec succès.');
+    return redirect()->route('boilerplate.produits.index')
+        ->with('success', 'Produit mis à jour avec succès.');
+}
+
+    public function miseAJourStock($id, $quantité, $type)
+    {
+        $produit = Produit::findOrFail($id);
+
+        // Vérification de la quantité pour éviter un stock négatif
+        if ($type === 'entrée') {
+            $produit->qte_stock += $quantité;
+        } elseif ($type === 'sortie') {
+            if ($produit->qte_stock < $quantité) {
+                return redirect()->back()->withErrors(['message' => 'Stock insuffisant pour effectuer cette sortie.']);
+            }
+            $produit->qte_stock -= $quantité;
+        }
+
+        $produit->save();
+
+        // Enregistrer le mouvement
+        MouvementProduit::create([
+            'id_produit' => $produit->id,
+            'type' => $type,
+            'quantité' => $quantité,
+            'stock_disponible' => $produit->qte_stock,
+            'date_mouvement' => now(),
+        ]);
     }
 }

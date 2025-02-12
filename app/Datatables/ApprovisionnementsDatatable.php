@@ -26,7 +26,7 @@ class ApprovisionnementsDatatable extends Datatable
     public function setUp()
     {
         $this->order('id_approvisionnement', 'desc');
-        $this->buttons('filters', 'csv', 'refresh', 'print');
+        $this->buttons('filters', 'csv', 'refresh', 'print','excel' );
     }
 
     public function columns(): array

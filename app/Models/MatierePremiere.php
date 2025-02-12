@@ -46,4 +46,17 @@ class MatierePremiere extends Model
                     ->withPivot('id_fournisseur', 'qte_approvisionnement', 'montant')
                     ->withTimestamps();
     }
+
+    public function productions()
+{
+    return $this->belongsToMany(Production::class, 'id_MP', 'id_production')
+                ->using(ProductionMatierePremiere::class)
+                ->withPivot('qte')
+                ->withTimestamps();
+}
+
+public function mouvements()
+{
+    return $this->hasMany(MouvementMp::class, 'id_MP');
+}
 }

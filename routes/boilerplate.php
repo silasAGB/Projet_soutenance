@@ -27,6 +27,8 @@ use App\Http\Controllers\ProduitStockController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\ClientController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MouvementmpController;
+use App\Http\Controllers\MouvementproduitController;
 use App\Menu\Rapport;
 
 Route::group([
@@ -104,6 +106,11 @@ Route::group([
         Route::put('matierepremieres/{id_MP}', [MatierePremiereController::class, 'update'])->name('matierepremieres.update');
         Route::delete('matierepremieres/{id_MP}', [MatierePremiereController::class, 'destroy'])->name('matierepremieres.destroy');
 
+        // mouvement matièrepremieres
+
+        Route::get('matierepremieres/mouvements/index', [MouvementmpController::class, 'index'])->name('matierepremieres.mouvements');
+
+
         // produits
         Route::get('produits/index', [ProduitController::class, 'index'])->name('produits.index');
         Route::get('produits/create', [ProduitController::class, 'create'])->name('produits.create');
@@ -114,6 +121,8 @@ Route::group([
         Route::delete('produits/{id_produit}', [ProduitController::class, 'destroy'])->name('produits.destroy');
         Route::get('details/{id_produit}', [ProduitController::class, 'show'])->name('produits.details');
 
+        // mouvemen produits
+        Route::get('produits/mouvements/index', [MouvementproduitController::class, 'index'])->name('produits.mouvements');
 
 
         // Approvisionnement Routes
@@ -141,6 +150,7 @@ Route::group([
         Route::prefix('productions')->group(function () {
             Route::get('statistiques', [ProductionController::class, 'statistiques'])->name('productions.statistiques');
             Route::get('gerer', [ProductionController::class, 'index'])->name('productions.gerer');
+            Route::get('details/{id_production}', [ProductionController::class, 'show'])->name('productions.details');
             Route::get('create', [ProductionController::class, 'create'])->name('productions.create');
             Route::post('store', [ProductionController::class, 'store'])->name('productions.store');
             Route::get('show/{id_production}', [ProductionController::class, 'show'])->name('productions.show');

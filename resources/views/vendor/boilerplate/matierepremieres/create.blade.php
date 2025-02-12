@@ -47,8 +47,11 @@
                             <option value="">Sélectionnez une unité</option>
                             <option value="kg">Kg</option>
                             <option value="l">L</option>
-                            <option value="g">G</option>
+                            <option value="g">g</option>
                             <option value="ml">mL</option>
+                            <option value="Boite">Boites</option>
+                            <option value="Boite">Bouchons</option>
+                            <option value="Emballage">Emballages</option>
                         </select>
                         @error('unite')
                             <div class="text-danger">{{ $message }}</div>

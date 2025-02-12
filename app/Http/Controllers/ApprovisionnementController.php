@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Approvisionnement;
 use App\Models\Fournisseur;
 use App\Models\MatierePremiere;
+use App\Models\MouvementMp;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -34,20 +35,20 @@ class ApprovisionnementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'date_approvisionnement' => 'required|date',
+            'date_approvisionnement' => 'required|date|after_or_equal:today',
             'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP|distinct',
             'matieresPremieres.*.id_fournisseur' => 'required|exists:fournisseurs,id_fournisseur',
             'matieresPremieres.*.qte_approvisionnement' => 'required|numeric',
         ]);
 
         $dateApprovisionnement = Carbon::parse($request->date_approvisionnement);
-        $mois = $dateApprovisionnement->format('F');
+        $mois = $dateApprovisionnement->format('m');
         $annee = $dateApprovisionnement->format('Y');
         $nombreApprovisionnement = Approvisionnement::whereYear('date_approvisionnement', $dateApprovisionnement->year)
             ->whereMonth('date_approvisionnement', $dateApprovisionnement->month)
             ->count() + 1;
 
-        $reference_approvisionnement = 'Approvisionnement N°' . $nombreApprovisionnement . '-' . $mois . '-' . $annee;
+        $reference_approvisionnement = 'Appro - ' . $mois . $annee. str_pad($nombreApprovisionnement, 3, '0', STR_PAD_LEFT); // Inclure le mois et le nombre avec remplissage
 
         $approvisionnement = Approvisionnement::create([
             'date_approvisionnement' => $request->date_approvisionnement,
@@ -78,7 +79,7 @@ class ApprovisionnementController extends Controller
 
     public function edit($id_approvisionnement)
     {
-        $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->findOrFail($id_approvisionnement);
+        $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs', ])->findOrFail($id_approvisionnement);
 
         if (in_array($approvisionnement->statut, ['livré', 'Terminé'])) {
             return redirect()->route('boilerplate.approvisionnements.gerer')
@@ -89,65 +90,94 @@ class ApprovisionnementController extends Controller
         $matieresPremieres = MatierePremiere::all();
         $statuts = ['en attente d\'approbation', 'en attente de livraison', 'livré', 'Terminé'];
 
-        return view('boilerplate::approvisionnements.edit', compact('approvisionnement', 'fournisseurs', 'matieresPremieres', 'statuts'));
+        return view('boilerplate::approvisionnements.edit', compact('approvisionnement', 'fournisseurs', 'matieresPremieres', 'statuts', ));
     }
 
     public function update(Request $request, $id_approvisionnement)
-    {
-        $request->validate([
-            'date_approvisionnement' => 'required|date',
-            'reference_approvisionnement' => 'required|string|max:255',
-            'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP|distinct',
-            'matieresPremieres.*.id_fournisseur' => 'required|exists:fournisseurs,id_fournisseur',
-            'matieresPremieres.*.qte_approvisionnement' => 'required|numeric',
+{
+    $request->validate([
+        'date_approvisionnement' => 'required|date|nullable|after_or_equal:today',
+        'reference_approvisionnement' => 'required|string|max:255',
+        'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP|distinct',
+        'matieresPremieres.*.id_fournisseur' => 'required|exists:fournisseurs,id_fournisseur',
+        'matieresPremieres.*.qte_approvisionnement' => 'required|numeric',
+        'matieresPremieres.*.date_livraison' => 'nullable|date',
+        'matieresPremieres.*.qte_livree' => 'nullable|numeric',
+    ]);
+
+    $approvisionnement = Approvisionnement::findOrFail($id_approvisionnement);
+    if (in_array($approvisionnement->statut, ['livré', 'Terminé'])) {
+        return redirect()->route('boilerplate.approvisionnements.gerer')
+                         ->with('error', 'Impossible de modifier un approvisionnement qui est déjà livré ou terminé.');
+    }
+
+    $ancienStatut = $approvisionnement->statut;
+    $approvisionnement->update([
+        'date_approvisionnement' => $request->date_approvisionnement,
+        'reference_approvisionnement' => $request->reference_approvisionnement,
+        'statut' => $request->statut,
+    ]);
+
+    $approvisionnement->matieresPremieres()->detach();
+    $totalMontant = 0;
+    $derniereDateLivraison = null;
+
+    foreach ($request->matieresPremieres as $matiere) {
+        $prixAchat = Fournisseur::find($matiere['id_fournisseur'])->matieresPremieres()->where('matiere_premieres.id_MP', $matiere['id_MP'])->first()->pivot->prix_achat;
+        $montant = $matiere['qte_approvisionnement'] * $prixAchat;
+        $approvisionnement->matieresPremieres()->attach($matiere['id_MP'], [
+            'id_fournisseur' => $matiere['id_fournisseur'],
+            'qte_approvisionnement' => $matiere['qte_approvisionnement'],
+            'statut' => $matiere['statut'],
+            'qte_livree' => $matiere['qte_livree'] ?? 0,
+            'date_livraison' => $matiere['date_livraison'] ?? null,
+            'montant' => $montant,
         ]);
+        $totalMontant += $montant;
 
-        $approvisionnement = Approvisionnement::findOrFail($id_approvisionnement);
+    }
 
-        if (in_array($approvisionnement->statut, ['livré', 'Terminé'])) {
-            return redirect()->route('boilerplate.approvisionnements.gerer')
-                             ->with('error', 'Impossible de modifier un approvisionnement qui est déjà livré ou terminé.');
-        }
 
-        $ancienStatut = $approvisionnement->statut;
 
-        $approvisionnement->update([
-            'date_approvisionnement' => $request->date_approvisionnement,
-            'reference_approvisionnement' => $request->reference_approvisionnement,
-            'statut' => $request->statut,
-        ]);
+    // Mise à jour du montant total
+    $approvisionnement->update(['montant' => $totalMontant]);
 
-        $approvisionnement->matieresPremieres()->detach();
-        $totalMontant = 0;
+    // Mise à jour de la date de livraison si le statut est "livré"
+    if ($request->statut === 'livré' && $derniereDateLivraison) {
 
-        foreach ($request->matieresPremieres as $matiere) {
-            $prixAchat = Fournisseur::find($matiere['id_fournisseur'])->matieresPremieres()->where('matiere_premieres.id_MP', $matiere['id_MP'])->first()->pivot->prix_achat;
-            $montant = $matiere['qte_approvisionnement'] * $prixAchat;
+                // Vérifiez la dernière date de livraison
+                if ($matiere['date_livraison'] && (!$derniereDateLivraison || Carbon::parse($matiere['date_livraison'])->isAfter($derniereDateLivraison))) {
+                    $derniereDateLivraison = Carbon::parse($matiere['date_livraison']);
+                }
 
-            $approvisionnement->matieresPremieres()->attach($matiere['id_MP'], [
-                'id_fournisseur' => $matiere['id_fournisseur'],
-                'qte_approvisionnement' => $matiere['qte_approvisionnement'],
-                'montant' => $montant,
-            ]);
+        $approvisionnement->update(['date_livraison' => $derniereDateLivraison]);
+    }
 
-            $totalMontant += $montant;
-        }
-
-        $approvisionnement->update(['montant' => $totalMontant]);
-
-        // Mise à jour du stock de matières premières si le statut est "Livré" ou "Terminé"
-        if (($request->statut === 'livré' || $request->statut === 'Terminé') &&
-            ($ancienStatut !== 'livré' && $ancienStatut !== 'Terminé')) {
-            foreach ($approvisionnement->matieresPremieres as $matiere) {
-                $matierePremiere = MatierePremiere::find($matiere->pivot->id_MP);
-                $matierePremiere->qte_stock += $matiere->pivot->qte_livree;
+    // Mise à jour du stock de matières premières si le statut est "Livré" ou "Terminé"
+    foreach ($request->matieresPremieres as $matiere) {
+        if ($matiere['statut'] === 'livrée') {
+            $matierePremiere = MatierePremiere::find($matiere['id_MP']);
+            $mouvementExiste = MouvementMp::where('id_MP', $matiere['id_MP'])
+                ->where('id_approvisionnement', $approvisionnement->id_approvisionnement)
+                ->exists();
+            if (!$mouvementExiste) {
+                $matierePremiere->qte_stock += $matiere['qte_livree'];
                 $matierePremiere->save();
+                MouvementMp::create([
+                    'id_MP' => $matiere['id_MP'],
+                    'id_approvisionnement' => $approvisionnement->id_approvisionnement,
+                    'type' => 'entrée',
+                    'quantité' => $matiere['qte_livree'],
+                    'stock_disponible' => $matierePremiere->qte_stock,
+                    'date_mouvement' => now(),
+                ]);
             }
         }
-
-        return redirect()->route('boilerplate.approvisionnements.gerer')
-                         ->with('success', 'Approvisionnement mis à jour avec succès.');
     }
+
+    return redirect()->route('boilerplate.approvisionnements.gerer')
+                     ->with('success', 'Approvisionnement mis à jour avec succès.');
+}
 
     public function destroy($id_approvisionnement)
     {

@@ -29,7 +29,11 @@
                 <tbody>
                     @foreach($productions as $production)
                         <tr>
-                            <td>{{ $production->reference_production }}</td>
+                            <td>
+                                <a href="{{ route('boilerplate.productions.details', $production->id_production) }}">
+                                    {{ $production->reference_production }}
+                                </a>
+                            </td>
                             <td>{{ $production->nom_production }}</td>
                             <td>{{ $production->date_prevue }}</td>
                             <td>{{ $production->qte_prevue }}</td>
@@ -43,8 +47,7 @@
             </table>
         @endif
     </div>
-    @endcomponent
-
+@endcomponent
 
 @component('boilerplate::card')
     <div class="card-header">
@@ -66,7 +69,11 @@
                 <tbody>
                     @foreach($approvisionnements as $approvisionnement)
                         <tr>
-                            <td>{{ $approvisionnement->reference_approvisionnement }}</td>
+                            <td>
+                                <a href="{{ route('boilerplate.approvisionnements.details', $approvisionnement->id_approvisionnement) }}">
+                                    {{ $approvisionnement->reference_approvisionnement }}
+                                </a>
+                            </td>
                             <td>{{ $approvisionnement->date_approvisionnement }}</td>
                             <td>{{ $approvisionnement->formatted_montant }}</td>
                             <td>
@@ -79,7 +86,7 @@
             </table>
         @endif
     </div>
- @endcomponent
+@endcomponent
 
 <!-- Modal de refus -->
 <div class="modal fade" id="refusModal" tabindex="-1" role="dialog" aria-labelledby="refusModalLabel" aria-hidden="true">
@@ -96,7 +103,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="raison">Raison</label>
-                        <textarea name="raison" id="raison" class="form-control" rows="4" required></textarea>
+                        <textarea name="raison" id="raison" class="form-control" rows="4" ></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

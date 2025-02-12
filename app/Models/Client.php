@@ -9,10 +9,13 @@ class Client extends Model
 {
     use HasFactory;
 
-    protected $table = 'clients';
 
     // Définir la clé primaire personnalisée
     protected $primaryKey = 'id_client';
+
+
+    protected $table = 'clients';
+
 
 
     protected $fillable = [

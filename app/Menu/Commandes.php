@@ -22,15 +22,15 @@ class Commandes implements MenuItemInterface
             'route' => 'boilerplate.commandes.statistiques',
         ]);
 
-        $item->add('Gerer commandes', [
+        $item->add('Gérer commandes', [
             'permission' => 'backend',
-            'active' => 'boilerplate.commandes.gerer',
+            'active' => ['boilerplate.commandes.gerer','boilerplate.commandes.create','boilerplate.commandes.details','boilerplate.commandes.edit'],
             'route' => 'boilerplate.commandes.gerer',
         ]);
 
         $item->add('Client', [
             'permission' => 'backend',
-            'active' => 'boilerplate.commandes.client',
+            'active' => ['boilerplate.commandes.client','boilerplate.commandes.createclient'],
             'route' => 'boilerplate.commandes.client',
         ]);
     }

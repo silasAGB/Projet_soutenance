@@ -2,7 +2,7 @@
 
 return [
     'edition'    => true,
-    'widgets'    => [
+    /*'widgets'    => [
         ['current-user' => []],
-    ],
+    ],*/
 ];

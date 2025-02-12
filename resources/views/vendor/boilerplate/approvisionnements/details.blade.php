@@ -22,7 +22,7 @@
     @component('boilerplate::card')
     <div class="row">
         <div class="col-12">
-            <h3 class="mb-4 text-primary">@lang('Bon de commande')</h3>
+            <h3 class="mb-4 text-primary">@lang('Détails')</h3>
             <div class="float-right pb-1">
                 <a href="{{ route('boilerplate.approvisionnements.edit', $approvisionnement->id_approvisionnement) }}" class="btn btn-primary">
                     @lang('Modifier l\'approvisionnement')
@@ -36,13 +36,27 @@
                         <td>{{ $approvisionnement->reference_approvisionnement }}</td>
                     </tr>
                     <tr>
-                        <th>@lang('Date')</th>
+                        <th>@lang('Date prévue')</th>
                         <td>{{ $approvisionnement->date_approvisionnement }}</td>
                     </tr>
                     <tr>
-                        <th>@lang('Montant Total')</th>
-                        <td>{{ $approvisionnement->formatted_montant }} FCFA</td>
+                        <th>@lang('Date d\'approvisionnement')</th>
+                        <td>{{ $approvisionnement->formatted_date_livraison ?? 'Non spécifiée' }}</td>
                     </tr>
+                    <tr>
+                        <th>@lang('Montant Total')</th>
+                        <td>{{ $approvisionnement->formatted_montant }}</td>
+                    </tr>
+                    <tr>
+                        <th>@lang('Statut')</th>
+                        <td>{{ $approvisionnement->statut }}</td>
+                    </tr>
+                    @if(in_array($approvisionnement->statut, ['livrée', 'terminée']))
+                        <tr>
+                            <th>@lang('Quantité Livrée')</th>
+                            <td>{{ $approvisionnement->qte_livree ?? 'Non spécifiée' }}</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -57,8 +71,10 @@
                         <th>@lang('Matière Première')</th>
                         <th>@lang('Fournisseur')</th>
                         <th>@lang('Quantité Commandée')</th>
-                        <th>@lang('Quantité Livrée')</th> <!-- Nouvelle colonne pour la quantité livrée -->
+                        <th>@lang('Quantité Livrée')</th>
+                        <th>@lang('Date de livraison')</th>
                         <th>@lang('Montant')</th>
+                        <th>@lang('Statut')</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,8 +88,10 @@
                                 {{ $fournisseur ? $fournisseur->nom_fournisseur : 'N/A' }}
                             </td>
                             <td>{{ $matierePremiere->pivot->qte_approvisionnement }} {{ $matierePremiere->unite }}</td>
-                            <td>{{ $matierePremiere->pivot->qte_livree ?? 'N/A' }} {{ $matierePremiere->unite }}</td> <!-- Afficher la quantité livrée -->
+                            <td>{{ $matierePremiere->pivot->qte_livree ?? 'Non livrée' }} {{ $matierePremiere->unite }}</td>
+                            <td>{{ $matierePremiere->pivot->date_livraison ?? 'Non livrée' }} </td>
                             <td>{{ number_format($matierePremiere->pivot->montant, 2) }} FCFA</td>
+                            <td>{{ $matierePremiere->pivot->statut}} </td>
                         </tr>
                     @endforeach
                 </tbody>

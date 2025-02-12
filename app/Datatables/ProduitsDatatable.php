@@ -46,8 +46,6 @@ class ProduitsDatatable extends Datatable
         Column::add(__('Emplacement'))
             ->data('emplacement'),
 
-        Column::add(__('Categorie'))
-            ->data('categorie.nom_categorie'),
 
         Column::add()
             ->width('20px')

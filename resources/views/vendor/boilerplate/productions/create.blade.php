@@ -64,6 +64,8 @@
                 @component('boilerplate::card', ['title' => 'Détails de la Production'])
                     @component('boilerplate::input', ['type' => 'date', 'name' => 'date_prevue', 'label' => 'Date prévue', 'required' => true, 'value' => old('date_prevue')])@endcomponent
 
+                    @component('boilerplate::input', ['type' => 'time', 'name' => 'heure_prevue', 'label' => 'Heure prévue', 'value' => old('heure_prevue')])@endcomponent
+
                     <div class="form-group">
                         <label for="qte_prevue">Quantité prévue</label>
                         <input type="number" class="form-control" id="qte_prevue" name="qte_prevue" required>
@@ -81,6 +83,21 @@
                             </span>
                         </div>
                     </div>
+
+                    <!-- Nouveau champ : Personnel affecté -->
+                    <div class="form-group">
+                        <label for="nom_personnel">Personnel affecté</label>
+                        <input type="text" class="form-control" id="nom_personnel" name="nom_personnel" placeholder="Entrez le nom du personnel" value="{{ old('nom_personnel') }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="consignes_specifiques">@lang('Consignes spécifiques')</label>
+                        <textarea name="consignes_specifiques" id="consignes_specifiques" class="form-control" rows="4">{{ old('consignes_specifiques') }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="autres_remarques">@lang('Autres remarques')</label>
+                        <textarea name="autres_remarques" id="autres_remarques" class="form-control" rows="4">{{ old('autres_remarques') }}</textarea>
+                    </div>
                 @endcomponent
             </div>
         </div>
@@ -97,19 +114,16 @@
 
                 const matieresPremieresList = $('#matieres-premieres-list');
                 matieresPremieresList.empty();
-                let stockInsuffisant = false; // Indicateur de stock insuffisant
+                let stockInsuffisant = false;
 
                 if (matieresPremieres && unites) {
                     for (const matierePremiere in matieresPremieres) {
                         const quantite = matieresPremieres[matierePremiere] * nbPreparations;
                         const unite = unites[matierePremiere] || '';
-
-                        // Récupérer la quantité en stock de la matière première
                         const quantiteEnStock = parseFloat(selectedOption.data('stock')[matierePremiere]) || 0;
 
-                        // Vérifier si la quantité en stock est insuffisante
                         if (quantite > quantiteEnStock) {
-                            matieresPremieresList.append('<li style="color: red;">' + quantite + ' ' + unite + ' de ' + matierePremiere + ' (Quantité insuffisante, stock actuel: ' + quantiteEnStock + ' ' + unite + ')</li>');
+                            matieresPremieresList.append('<li style="color: red;">' + quantite + ' ' + unite + ' de ' + matierePremiere + ' (Insuffisant, stock actuel : ' + quantiteEnStock + ')</li>');
                             stockInsuffisant = true;
                         } else {
                             matieresPremieresList.append('<li>' + quantite + ' ' + unite + ' de ' + matierePremiere + '</li>');
@@ -118,7 +132,6 @@
 
                     $('#matieres-premieres-section').show();
 
-                    // Afficher ou masquer l'alerte et le bouton d'approvisionnement
                     if (stockInsuffisant) {
                         $('#stock-alert').show();
                         $('#approvisionnement-btn').show();
@@ -131,6 +144,8 @@
                     $('#stock-alert').hide();
                     $('#approvisionnement-btn').hide();
                 }
+
+                $('#matieres_premieres').val(JSON.stringify(matieresPremieresList));
             }
 
             function updatePreparationsAndQuantity() {
@@ -151,7 +166,6 @@
             $('#id_produit').change(function() {
                 updatePreparationsAndQuantity();
                 updateMatieresPremieres();
-                updateReference();
             });
 
             $('#qte_prevue, #nbr_preparation').on('input change', updatePreparationsAndQuantity);

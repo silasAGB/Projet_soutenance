@@ -22,15 +22,15 @@ class Approvisionnement implements MenuItemInterface
             'route' => 'boilerplate.approvisionnements.statistiques',
         ]);
 
-        $item->add('Gerer Approvisionnements', [
+        $item->add('Gérer Approvisionnements', [
             'permission' => 'backend',
-            'active' => 'boilerplate.approvisionnements.gerer',
+            'active' => ['boilerplate.approvisionnements.gerer','boilerplate.approvisionnements.create','boilerplate.approvisionnements.details','boilerplate.approvisionnements.edit'],
             'route' => 'boilerplate.approvisionnements.gerer',
         ]);
 
         $item->add('Gerer fournisseur', [
             'permission' => 'backend',
-            'active' => 'boilerplate.approvisionnements.fournisseurs',
+            'active' => ['boilerplate.approvisionnements.fournisseurs','boilerplate.approvisionnements.createfournisseur','boilerplate.fournisseur.edit'],
             'route' => 'boilerplate.approvisionnements.fournisseurs',
         ]);
 

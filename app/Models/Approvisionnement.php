@@ -16,7 +16,6 @@ class Approvisionnement extends Model
         'reference_approvisionnement',
         'statut',
         'montant',
-        'qte_livree',
         'date_livraison',
     ];
 
@@ -30,7 +29,7 @@ class Approvisionnement extends Model
     public function matieresPremieres()
     {
         return $this->belongsToMany(MatierePremiere::class, 'approvisionnement_matiere_premiere', 'id_approvisionnement', 'id_MP')
-                    ->withPivot('id_fournisseur', 'qte_approvisionnement', 'montant')
+                    ->withPivot('id_fournisseur', 'qte_approvisionnement', 'montant' , 'statut', 'qte_livree', 'date_livraison')
                     ->withTimestamps();
     }
 
@@ -42,9 +41,20 @@ class Approvisionnement extends Model
                     ->withTimestamps();
     }
 
+    public function mouvements()
+   {
+       return $this->hasMany(MouvementMp::class, 'id_approvisionnement');
+   }
+
     // Formater la date de livraison
-    public function getFormattedDateLivraisonAttribute()
+    /*public function getFormattedDateLivraisonAttribute()
     {
         return $this->date_livraison ? $this->date_livraison->format('d/m/Y') : 'Non livré';
     }
+    */
+
+    public function getFormattedDateLivraisonAttribute()
+{
+    return $this->date_livraison ? \Carbon\Carbon::parse($this->date_livraison)->format('d/m/Y') : __('Non livré');
+}
 }

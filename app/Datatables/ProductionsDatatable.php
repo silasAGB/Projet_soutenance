@@ -19,7 +19,7 @@ class ProductionsDatatable extends Datatable
     public function setUp()
     {
         $this->order('id_production', 'asc');
-        $this->buttons('filters', 'csv', 'refresh', 'print');
+        $this->buttons('filters', 'csv', 'refresh', 'print','excel');
     }
 
     public function columns(): array
@@ -33,8 +33,15 @@ class ProductionsDatatable extends Datatable
                 ->data('date_prevue')
                 ->dateFormat(__("boilerplate::date.Ymd")),
 
-            Column::add(__('Nombre de Préparations'))
+            Column::add(__('Heure Prévue'))
+                ->data('heure_prevue')
+                ->width('120px'),
+
+            Column::add(__('Nbr de Préparations'))
                 ->data('nbr_preparation'),
+
+            Column::add(__('Quantité Prévue'))
+                ->data('qte_prevue'),
 
             Column::add(__('Quantité Produite'))
                 ->data('qte_produite'),
@@ -43,6 +50,15 @@ class ProductionsDatatable extends Datatable
                 ->width('180px')
                 ->data('date_production')
                 ->dateFormat(__("boilerplate::date.Ymd")),
+
+            Column::add(__('Personnel_affecté'))
+                ->data('nom_personnel'),
+
+            Column::add(__('Consignes Spécifiques'))
+                ->data('consignes_specifiques'),
+
+            Column::add(__('Avaries'))
+                ->data('avaries'),
 
             Column::add(__('Statut'))
                 ->data('statut'),

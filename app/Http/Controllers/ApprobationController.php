@@ -28,12 +28,12 @@ class ApprobationController extends Controller
     public function refuserProduction(Request $request, $id)
     {
         $request->validate([
-            'raison' => 'required|string|max:255',
+            'raison' => 'nullable|string|max:255', // Changer 'required' en 'nullable'
         ]);
 
         $production = Production::findOrFail($id);
         $production->statut = 'Annulé';
-        $production->raison_refus = $request->raison;
+        $production->raison_refus = $request->raison; // La raison peut être null
         $production->save();
 
         return redirect()->route('boilerplate.approbations.gerer')->with('success', 'Production refusée avec succès.');
@@ -51,12 +51,12 @@ class ApprobationController extends Controller
     public function refuserApprovisionnement(Request $request, $id)
     {
         $request->validate([
-            'raison' => 'required|string|max:255',
+            'raison' => 'nullable|string|max:255', // Changer 'required' en 'nullable'
         ]);
 
         $approvisionnement = Approvisionnement::findOrFail($id);
         $approvisionnement->statut = 'Annulé';
-        $approvisionnement->raison_refus = $request->raison;
+        $approvisionnement->raison_refus = $request->raison; // La raison peut être null
         $approvisionnement->save();
 
         return redirect()->route('boilerplate.approbations.gerer')->with('success', 'Approvisionnement refusé avec succès.');

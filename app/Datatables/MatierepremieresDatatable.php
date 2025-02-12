@@ -18,6 +18,7 @@ class MatierepremieresDatatable extends Datatable
 
     public function setUp()
     {
+        $this->buttons('excel', 'print');
         $this->order('id', 'asc');
     }
 

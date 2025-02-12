@@ -29,7 +29,7 @@ class FournisseursDatatable extends Datatable
     public function setUp()
     {
         $this->order('id', 'asc');
-        $this->buttons('filters', 'csv', 'refresh','print');
+        $this->buttons('filters', 'csv', 'refresh','print','excel');
     }
 
     public function columns(): array
@@ -53,7 +53,6 @@ class FournisseursDatatable extends Datatable
                 ->actions(function (Fournisseur $fournisseur) {
                     return join([
                         Button::edit('boilerplate.fournisseur.edit', $fournisseur),
-                        Button::delete('boilerplate.fournisseur.destroy', $fournisseur),
                     ]);
                 }),
         ];

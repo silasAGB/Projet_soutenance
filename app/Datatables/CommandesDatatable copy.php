@@ -22,7 +22,7 @@ class CommandesDatatable extends Datatable
     public function setUp()
     {
         $this->order('id', 'asc');
-        $this->buttons('filters', 'csv', 'refresh','print');
+        $this->buttons('filters', 'csv', 'refresh','print','excel');
     }
 
     public function columns(): array

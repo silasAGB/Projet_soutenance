@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 @component('boilerplate::card', ['title' => 'Informations sur l\'approvisionnement'])
                     @component('boilerplate::input', ['type' => 'date', 'name' => 'date_approvisionnement', 'label' => 'Date d\'approvisionnement', 'required' => true, 'value' => $approvisionnement->date_approvisionnement])@endcomponent
                     @component('boilerplate::input', ['name' => 'reference_approvisionnement', 'label' => 'Référence d\'approvisionnement', 'required' => true, 'value' => $approvisionnement->reference_approvisionnement, 'readonly' => true])@endcomponent
@@ -36,14 +36,9 @@
                             <option value="Annulé" {{ $approvisionnement->statut == 'Annulé' ? 'selected' : '' }}>Annulé</option>
                         </select>
                     </div>
-
-                    <div id="livraisonFields" style="display: {{ $approvisionnement->statut == 'livré' ? 'block' : 'none' }};">
-                        @component('boilerplate::input', ['type' => 'number', 'name' => 'quantite_livree', 'label' => 'Quantité livrée', 'value' => $approvisionnement->quantite_livree])@endcomponent
-                        @component('boilerplate::input', ['type' => 'date', 'name' => 'date_livraison', 'label' => 'Date de livraison', 'value' => $approvisionnement->date_livraison])@endcomponent
-                    </div>
                 @endcomponent
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-8">
                 @component('boilerplate::card', ['title' => 'Matières Premières'])
                     <table class="table table-bordered" id="matieresPremieresTable">
                         <thead>
@@ -52,6 +47,9 @@
                                 <th>Fournisseur</th>
                                 <th>Quantité</th>
                                 <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Quantité livrée</th>
+                                <th>Date de livraison</th>
                                 <th><button type="button" class="btn btn-success" id="addRow">+</button></th>
                             </tr>
                         </thead>
@@ -79,6 +77,18 @@
                                     </td>
                                     <td>
                                         <input type="number" step="0.01" class="form-control montant" name="matieresPremieres[{{ $index }}][montant]" value="{{ $mp->pivot->montant }}" required readonly>
+                                    </td>
+                                    <td>
+                                        <select class="form-control statut" name="matieresPremieres[{{ $index }}][statut]" required>
+                                            <option value="livrée" {{ $mp->pivot->statut == 'livrée' ? 'selected' : '' }}>Livrée</option>
+                                            <option value="en attente" {{ $mp->pivot->statut == 'en attente' ? 'selected' : '' }}>En attente</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control qteLivree" name="matieresPremieres[{{ $index }}][qte_livree]" value="{{ $mp->pivot->qte_livree }}" {{ $mp->pivot->statut != 'livrée' ? 'disabled' : '' }}>
+                                    </td>
+                                    <td>
+                                        <input type="date" class="form-control dateLivraison" name="matieresPremieres[{{ $index }}][date_livraison]" value="{{ $mp->pivot->date_livraison }}" {{ $mp->pivot->statut != 'livrée' ? 'disabled' : '' }}>
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-danger removeRow">-</button>
@@ -191,6 +201,21 @@
                 $(this).closest('tr').remove();
                 updateMatierePremiereOptions();
             });
+
+            $('#matieresPremieresTable').on('change', '.statut', function() {
+                const row = $(this).closest('tr');
+                const statut = $(this).val();
+                const qteLivree = row.find('.qteLivree');
+                const dateLivraison = row.find('.dateLivraison');
+
+                if (statut === 'livrée') {
+                    qteLivree.prop('disabled', false);
+                    dateLivraison.prop('disabled', false);
+                } else {
+                    qteLivree.prop('disabled', true).val('');
+                    dateLivraison.prop('disabled', true).val('');
+                }
+            }); /* Cela concerne les qte_livrée et date de livraison des matière première */
 
             $('#statut').change(function() {
                 if ($(this).val() === 'livré') {

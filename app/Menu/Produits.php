@@ -16,15 +16,17 @@ class Produits implements MenuItemInterface
             'order' => 1,
         ]);
 
-        $item->add('Statistiques', [
+      /*  $item->add('Statistiques', [
             'permission' => 'backend',
             'active' => 'boilerplate.produits.statistiques',
             'route' => 'boilerplate.dashboard',
         ]);
 
+        */
+
         $item->add('Gestion de produits', [
             'permission' => 'backend',
-            'active' => 'boilerplate.produits.index',
+            'active' => ['boilerplate.produits.index','boilerplate.produits.create','boilerplate.produits.details','boilerplate.produits.edit'],
             'route' => 'boilerplate.produits.index',
         ]);
     }
