@@ -41,7 +41,7 @@
                     </tr>
                     <tr>
                         <th>@lang('Catégorie')</th>
-                        <td>{{ $produit->categories->nom_Categorie ?? 'Non défini' }}</td>
+                        <td>{{ $produit->Categories->nom_Categorie ?? 'Non défini' }}</td>
                     </tr>
                     <tr>
                         <th>@lang('Prix de détail')</th>

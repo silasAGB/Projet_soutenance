@@ -13,8 +13,8 @@
             <a href="{{ route('boilerplate.approvisionnements.gerer') }}" class="btn btn-default" data-toggle="tooltip" title="@lang('Retour à la liste')">
                 <span class="far fa-arrow-alt-circle-left text-muted"></span>
             </a>
-            <a href="{{ route('boilerplate.approvisionnements.gerer', $approvisionnement->id_approvisionnement) }}" class="btn btn-primary float-right" data-toggle="tooltip" title="@lang('Télécharger le bon de commande')">
-                <span class="fas fa-download"></span>
+            <a href="{{ route('boilerplate.approvisionnements.bons_de_commande', $approvisionnement->id_approvisionnement) }}" class="btn btn-primary float-right" data-toggle="tooltip" title="@lang('Télécharger le bon de commande')">
+                <span class="fas fa-download"></span> @lang('Télécharger le bon de commande')
             </a>
         </div>
     </div>
@@ -38,10 +38,6 @@
                     <tr>
                         <th>@lang('Date prévue')</th>
                         <td>{{ $approvisionnement->date_approvisionnement }}</td>
-                    </tr>
-                    <tr>
-                        <th>@lang('Date d\'approvisionnement')</th>
-                        <td>{{ $approvisionnement->formatted_date_livraison ?? 'Non spécifiée' }}</td>
                     </tr>
                     <tr>
                         <th>@lang('Montant Total')</th>

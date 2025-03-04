@@ -137,6 +137,8 @@ Route::group([
             Route::delete('destroy/{id_approvisionnement}', [ApprovisionnementController::class, 'destroy'])->name('approvisionnements.destroy');
         });
 
+        Route::get('downloadBonDeCommande/{id_approvisionnement}', [ApprovisionnementController::class, 'downloadBonDeCommande'])->name('approvisionnements.bons_de_commande');
+
         // Fournisseurs
         Route::get('fournisseurs', [FournisseurController::class, 'index'])->name('approvisionnements.fournisseurs');
         Route::get('createfournisseur', [FournisseurController::class, 'create'])->name('approvisionnements.createfournisseur');

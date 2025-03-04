@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg">
+            <div class="col-lg-6">
                 @component('boilerplate::card', ['title' => 'Informations Fournisseur'])
                     <div class="form-group">
                         <label for="nom_fournisseur">Nom du fournisseur</label>

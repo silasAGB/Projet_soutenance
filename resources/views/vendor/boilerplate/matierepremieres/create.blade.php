@@ -50,6 +50,7 @@
                             <option value="g">g</option>
                             <option value="ml">mL</option>
                             <option value="Boite">Boites</option>
+                            <option value="Bouteille">bouteilles</option>
                             <option value="Boite">Bouchons</option>
                             <option value="Emballage">Emballages</option>
                         </select>

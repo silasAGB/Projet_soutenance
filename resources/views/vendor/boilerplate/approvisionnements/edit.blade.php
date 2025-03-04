@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <label for="statut">Statut</label>
                         <select name="statut" id="statut" class="form-control" required>
-                            <option value="en attente d\'approbation" {{ $approvisionnement->statut == 'en attente d\'approbation' ? 'selected' : '' }}>En attente d'approvisionnement</option>
+                            <option value="en attente d'approbation" {{ $approvisionnement->statut == 'en attente d\'approbation' ? 'selected' : '' }}>En attente d'approbation</option>
                             <option value="en attente de livraison" {{ $approvisionnement->statut == 'en attente de livraison' ? 'selected' : '' }}>en attente de livraison</option>
                             <option value="livré" {{ $approvisionnement->statut == 'livré' ? 'selected' : '' }}>livré</option>
                             <option value="Annulé" {{ $approvisionnement->statut == 'Annulé' ? 'selected' : '' }}>Annulé</option>
@@ -217,7 +217,39 @@
                 }
             }); /* Cela concerne les qte_livrée et date de livraison des matière première */
 
+            function checkStatut() {
+        const statut = $('#statut').val();
+        const isLocked = statut === 'en attente de livraison'|| 'Livré';
+
+        // Désactiver ou activer les champs en fonction du statut
+        $('input[name="date_approvisionnement"]').prop('readonly', isLocked);
+        $('.matierePremiereSelect').prop('disabled', isLocked);
+        $('.fournisseurSelect').prop('disabled', isLocked);
+        $('.quantity').prop('readonly', isLocked);
+
+
+        $('.matierePremiereSelect, .fournisseurSelect').each(function() {
+        const $this = $(this);
+        if (isLocked) {
+            // Créez un champ caché pour soumettre la valeur
+            const hiddenInput = $('<input type="hidden" name="' + $this.attr('name') + '" value="' + $this.val() + '">');
+            $this.parent().append(hiddenInput);
+        } else {
+            // Supprimez le champ caché si le statut est modifiable
+            $this.parent().find('input[type="hidden"][name="' + $this.attr('name') + '"]').remove();
+        }
+    });
+
+
+    }
+
+    // Appel initial pour vérifier le statut
+    checkStatut();
+
             $('#statut').change(function() {
+
+                checkStatut();
+
                 if ($(this).val() === 'livré') {
                     $('#livraisonFields').show();
                 } else {

@@ -125,6 +125,17 @@ class ProduitController extends Controller
         ->with('success', 'Produit mis à jour avec succès.');
 }
 
+
+public function destroy($id_produit)
+{
+    $produit = Produit::findOrFail($id_produit);
+
+    $produit->delete();
+
+    return redirect()->route('boilerplate.produits.index')
+    ->with('growl', ["Produit supprimé avec succès.", 'success']);
+}
+
     public function miseAJourStock($id, $quantité, $type)
     {
         $produit = Produit::findOrFail($id);

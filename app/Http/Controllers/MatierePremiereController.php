@@ -7,6 +7,10 @@ use App\Models\Categorie;
 use App\Models\Fournisseur;
 use Illuminate\Http\Request;
 use App\Models\MouvementMp;
+use App\Mail\StockAlert;
+use Illuminate\Support\Facades\Mail;
+use App\Models\StockAlertLog;
+use Illuminate\Support\Facades\Log;
 
 class MatierePremiereController extends Controller
 {
@@ -34,7 +38,19 @@ class MatierePremiereController extends Controller
             'id_categorie' => 'required|exists:categories,id_categorie',
         ]);
 
-        MatierePremiere::create($request->all());
+        $matierePremiere = MatierePremiere::create($request->all());
+
+        // Enregistrer le mouvement de stock
+        MouvementMp::create([
+            'id_mp' => $matierePremiere->id_MP,
+            'type' => 'entrée',
+            'quantité' => $matierePremiere->qte_stock,
+            'stock_disponible' => $matierePremiere->qte_stock,
+            'date_mouvement' => now(),
+        ]);
+
+        // Vérifier si le stock est déjà sous le seuil minimum
+        $this->checkAndSendStockAlert($matierePremiere);
 
         return redirect()->route('boilerplate.matierepremieres.index')
             ->with('success', 'Matière première ajoutée avec succès.');
@@ -74,6 +90,9 @@ class MatierePremiereController extends Controller
             $matierePremiere->fournisseurs()->attach($fournisseur['id'], ['prix_achat' => $fournisseur['prix_achat']]);
         }
 
+        // Vérifier si le stock est sous le seuil minimum après la mise à jour
+        $this->checkAndSendStockAlert($matierePremiere);
+
         return redirect()->route('boilerplate.matierepremieres.index')
             ->with('success', 'Matière première mise à jour avec succès.');
     }
@@ -87,28 +106,71 @@ class MatierePremiereController extends Controller
             ->with('success', 'Matière première supprimée avec succès.');
     }
 
-
     public function miseAJourStock($id, $quantité, $type)
-{
-    $matierePremiere = MatierePremiere::findOrFail($id);
+    {
+        $matierePremiere = MatierePremiere::findOrFail($id);
 
-    if ($type === 'entrée') {
-        $matierePremiere->qte_stock += $quantité;
-    } elseif ($type === 'sortie') {
-        $matierePremiere->qte_stock -= $quantité;
+        if ($type === 'entrée') {
+            $matierePremiere->qte_stock += $quantité;
+        } elseif ($type === 'sortie') {
+            $matierePremiere->qte_stock -= $quantité;
+        }
+
+        $matierePremiere->save();
+
+        // Enregistrer le mouvement
+        MouvementMp::create([
+            'id_MP' => $matierePremiere->id,
+            'type' => $type,
+            'quantité' => $quantité,
+            'stock_disponible' => $matierePremiere->qte_stock,
+            'date_mouvement' => now(),
+        ]);
+
+        // Vérifier si le stock est sous le seuil minimum après la mise à jour
+        $this->checkAndSendStockAlert($matierePremiere);
+
+        return redirect()->back()->with('success', 'Stock mis à jour avec succès');
     }
 
-    $matierePremiere->save();
+    // Méthode pour vérifier et envoyer des alertes de stock
+    private function checkAndSendStockAlert(MatierePremiere $matierePremiere)
+    {
+        if ($matierePremiere->qte_stock <= $matierePremiere->stock_min) {
+            // Vérifier si une alerte a déjà été envoyée aujourd'hui pour cette matière
+            $lastAlert = StockAlertLog::where('id_mp', $matierePremiere->id_MP)
+                ->whereDate('created_at', today())
+                ->first();
 
-    // Enregistrer le mouvement
-    MouvementMp::create([
-        'id_MP' => $matierePremiere->id,
-        'type' => $type,
-        'quantité' => $quantité,
-        'stock_disponible' => $matierePremiere->qte_stock,
-        'date_mouvement' => now(),
-    ]);
+            if (!$lastAlert) {
+                try {
+                    Mail::to(config('mail.from.address'))->send(new StockAlert($matierePremiere));
 
-    return redirect()->back()->with('success', 'Stock mis à jour avec succès');
-}
+                    // Enregistrer l'alerte dans les logs
+                    StockAlertLog::create([
+                        'id_mp' => $matierePremiere->id_MP,
+                        'qte_stock' => $matierePremiere->qte_stock,
+                        'stock_min' => $matierePremiere->stock_min,
+                        'status' => 'sent'
+                    ]);
+
+                    Log::info("Alerte de stock envoyée pour {$matierePremiere->nom_MP}");
+
+                    // Ajouter un message flash pour indiquer qu'une alerte a été envoyée
+                    session()->flash('info', 'Une alerte de stock a été envoyée pour ' . $matierePremiere->nom_MP);
+                } catch (\Exception $e) {
+                    Log::error("Erreur lors de l'envoi de l'alerte pour {$matierePremiere->nom_MP}: " . $e->getMessage());
+
+                    // Enregistrer l'échec dans les logs
+                    StockAlertLog::create([
+                        'id_mp' => $matierePremiere->id_MP,
+                        'qte_stock' => $matierePremiere->qte_stock,
+                        'stock_min' => $matierePremiere->stock_min,
+                        'status' => 'failed',
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+        }
+    }
 }

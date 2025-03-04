@@ -28,7 +28,7 @@ public function create()
     $commandeCount = Commande::whereMonth('date_commande', $month)
         ->whereYear('date_commande', $year)
         ->count() + 1;
-    $referenceCommande = 'Commande N°' . $commandeCount . ' - ' . $month . ' - ' . $year;
+    $referenceCommande = 'CMD' . $commandeCount . $month . $year;
 
     $user = Auth::user();
     $produits = Produit::all();

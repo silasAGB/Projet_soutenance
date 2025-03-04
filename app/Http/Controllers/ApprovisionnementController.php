@@ -8,6 +8,7 @@ use App\Models\MatierePremiere;
 use App\Models\MouvementMp;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ApprovisionnementController extends Controller
 {
@@ -96,7 +97,7 @@ class ApprovisionnementController extends Controller
     public function update(Request $request, $id_approvisionnement)
 {
     $request->validate([
-        'date_approvisionnement' => 'required|date|nullable|after_or_equal:today',
+        'date_approvisionnement' => 'required|date',
         'reference_approvisionnement' => 'required|string|max:255',
         'matieresPremieres.*.id_MP' => 'required|exists:matiere_premieres,id_MP|distinct',
         'matieresPremieres.*.id_fournisseur' => 'required|exists:fournisseurs,id_fournisseur',
@@ -194,6 +195,33 @@ class ApprovisionnementController extends Controller
         return redirect()->route('boilerplate.approvisionnements.gerer')
                          ->with('growl', [__('Approvisionnement supprimé avec succès.'), 'success']);
     }
+
+    public function downloadBonDeCommande($id_approvisionnement)
+{
+    $approvisionnement = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->findOrFail($id_approvisionnement);
+
+    // Regrouper les matières premières par fournisseur
+    $bonsDeCommande = [];
+
+    foreach ($approvisionnement->matieresPremieres as $matiere) {
+        $fournisseurId = $matiere->pivot->id_fournisseur;
+        if (!isset($bonsDeCommande[$fournisseurId])) {
+            $bonsDeCommande[$fournisseurId] = [
+                'fournisseur' => $matiere->fournisseurs->first(),
+                'matieres' => [],
+                'date_approvisionnement' => $approvisionnement->date_approvisionnement,
+            ];
+        }
+        $bonsDeCommande[$fournisseurId]['matieres'][] = $matiere;
+    }
+
+    // Générer le PDF ou le document de bon de commande
+    // Vous pouvez utiliser une bibliothèque comme Dompdf ou Snappy pour générer le PDF
+    // Exemple avec Dompdf
+    $pdf = PDF::loadView('boilerplate::approvisionnements.bons_de_commande', compact('bonsDeCommande'));
+
+    return $pdf->download('bons_de_commande' . $approvisionnement->reference_approvisionnement . '.pdf');
+}
 
     public function statistiques()
     {

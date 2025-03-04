@@ -16,11 +16,13 @@ class Commandes implements MenuItemInterface
             'order' => 2,
         ]);
 
+        /*
         $item->add('Statistiques commandes', [
             'permission' => 'backend',
             'active' => 'boilerplate.commandes.statistiques',
             'route' => 'boilerplate.commandes.statistiques',
         ]);
+        */
 
         $item->add('Gérer commandes', [
             'permission' => 'backend',

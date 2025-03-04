@@ -54,9 +54,6 @@ class ProductionsDatatable extends Datatable
             Column::add(__('Personnel_affecté'))
                 ->data('nom_personnel'),
 
-            Column::add(__('Consignes Spécifiques'))
-                ->data('consignes_specifiques'),
-
             Column::add(__('Avaries'))
                 ->data('avaries'),
 

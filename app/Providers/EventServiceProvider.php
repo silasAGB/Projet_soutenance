@@ -7,6 +7,8 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
+use App\Events\ProductionCompleted;
+use App\Listeners\CheckStockAfterProduction;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         \App\Events\CreerMatierePremiere::class => [
             \App\Listeners\CreerMatierPremiereSmallBox::class,
+        ],
+
+        ProductionCompleted::class => [
+            CheckStockAfterProduction::class,
         ],
     ];
 

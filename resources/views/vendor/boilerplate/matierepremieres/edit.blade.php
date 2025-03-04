@@ -41,6 +41,7 @@
                             <option value="g" {{ old('unite', $matierePremiere->unite) == 'g' ? 'selected' : '' }}>g</option>
                             <option value="ml" {{ old('unite', $matierePremiere->unite) == 'ml' ? 'selected' : '' }}>mL</option>
                             <option value="Boite" {{ old('unite', $matierePremiere->unite) == 'Boite' ? 'selected' : '' }}>Boites</option>
+                            <option value="Bouteille" {{ old('unite', $matierePremiere->unite) == 'Bouteille' ? 'selected' : '' }}>Bouteilles</option>
                             <option value="Boite" {{ old('unite', $matierePremiere->unite) == 'Boite' ? 'selected' : '' }}>Bouchons</option>
                             <option value="Emballage" {{ old('unite', $matierePremiere->unite) == 'Emballage' ? 'selected' : '' }}>Emballages</option>
 

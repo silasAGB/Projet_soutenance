@@ -26,6 +26,7 @@
     <div class="row">
         <div class="col-lg-6">
             @component('boilerplate::card', ['title' => 'Détails de la Commande'])
+
                 @component('boilerplate::input', [
                     'type' => 'text',
                     'name' => 'reference_commande',
@@ -60,9 +61,11 @@
                 <div class="form-group">
                     <label for="statut">Statut</label>
                     <select id="statut" name="statut" class="form-control">
-                        <option value="en_attente" {{ old('statut', $commande->statut) == 'en_attente' ? 'selected' : '' }}>En attente</option>
-                        <option value="valide" {{ old('statut', $commande->statut) == 'valide' ? 'selected' : '' }}>Validé</option>
-                        <option value="annule" {{ old('statut', $commande->statut) == 'annule' ? 'selected' : '' }}>Annulé</option>
+                        <option value="En_attente" {{ old('statut', $commande->statut) == 'En_attente' ? 'selected' : '' }}>En attente de validation</option>
+                        <option value="Valide" {{ old('statut', $commande->statut) == 'Valide' ? 'selected' : '' }}>Validé</option>
+                        <option value="En attente de livraison" {{ old('statut', $commande->statut) == 'En attente de livraison' ? 'selected' : '' }}>En attente de livraison</option>
+                        <option value="Livrée" {{ old('statut', $commande->statut) == 'Livrée' ? 'selected' : '' }}>Livrée</option>
+                        <option value="Annule" {{ old('statut', $commande->statut) == 'Annule' ? 'selected' : '' }}>Annulé</option>
                     </select>
                 </div>
             @endcomponent
