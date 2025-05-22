@@ -27,7 +27,7 @@
 
                     <div class="form-group">
                         <label for="reference_produit">Référence</label>
-                        <input type="text" id="reference_produit" name="reference_produit" class="form-control" value="{{ $produit->reference_produit }}" required>
+                        <input type="text" id="reference_produit" name="reference_produit" class="form-control" value="{{ $produit->reference_produit }}" readonly>
                         @error('reference_produit')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror

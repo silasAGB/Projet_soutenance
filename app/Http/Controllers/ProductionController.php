@@ -15,7 +15,20 @@ class ProductionController extends Controller
     public function index()
     {
         $productions = Production::with('produit')->get();
-        return view('boilerplate::productions.gerer', compact('productions'));
+
+        $now = Carbon::now();
+        $productionEnAttentDeApprobation = Production::with('statut')
+            ->where('statut', 'En attente d\'approbation')
+            ->count();
+        $productionEnAttente = Production::where('statut', 'En attente de production')->count();
+        $productionEnCours = Production::where('statut', 'En cours de production')->count();
+        $productionEffectueCeMois = Production::where('statut', 'Terminé')
+            ->whereMonth('date_production', $now->month)
+            ->whereYear('date_production', $now->year)
+            ->count();
+
+
+        return view('boilerplate::productions.gerer', compact('productions','productionEnAttentDeApprobation', 'productionEnAttente', 'productionEnCours', 'productionEffectueCeMois'));
     }
 
     public function show($id_production)

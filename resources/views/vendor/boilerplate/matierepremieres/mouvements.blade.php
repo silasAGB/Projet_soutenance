@@ -7,6 +7,8 @@
     ]
 ])
 
+
+
 @section('content')
 @component('boilerplate::card')
 <div class="row">

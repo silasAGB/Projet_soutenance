@@ -14,8 +14,20 @@ class ApprovisionnementController extends Controller
 {
     public function index()
     {
+
+        $now = Carbon::now();
+        $approvisionnementsEnAttenteApprobation = Approvisionnement::where('statut', 'en attente d\'approbation')->count();
+        $approvisionnementsEnAttenteLivraison = Approvisionnement::where('statut', 'en attente de livraison')->count();
+        $approvisionnementsEffectueCeMois = Approvisionnement::whereMonth('created_at', $now->month)
+                                                            ->whereYear('created_at', $now->year)
+                                                            ->count();
+
+
+
         $approvisionnements = Approvisionnement::with(['matieresPremieres', 'matieresPremieres.fournisseurs'])->get();
-        return view('boilerplate::approvisionnements.gerer', compact('approvisionnements'));
+        return view('boilerplate::approvisionnements.gerer', compact('approvisionnements', 'approvisionnementsEnAttenteApprobation',
+            'approvisionnementsEnAttenteLivraison',
+            'approvisionnementsEffectueCeMois'));
     }
 
     public function show($id_approvisionnement)
@@ -223,19 +235,4 @@ class ApprovisionnementController extends Controller
     return $pdf->download('bons_de_commande' . $approvisionnement->reference_approvisionnement . '.pdf');
 }
 
-    public function statistiques()
-    {
-        $now = Carbon::now();
-        $approvisionnementsEnAttenteApprobation = Approvisionnement::where('statut', 'en attente d\'approbation')->count();
-        $approvisionnementsEnAttenteLivraison = Approvisionnement::where('statut', 'en attente de livraison')->count();
-        $approvisionnementsEffectueCeMois = Approvisionnement::whereMonth('created_at', $now->month)
-                                                            ->whereYear('created_at', $now->year)
-                                                            ->count();
-
-        return view('boilerplate::approvisionnements.statistiques', compact(
-            'approvisionnementsEnAttenteApprobation',
-            'approvisionnementsEnAttenteLivraison',
-            'approvisionnementsEffectueCeMois'
-        ));
-    }
 }

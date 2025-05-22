@@ -64,7 +64,7 @@ $id_fournisseur
         ]);
 
         $fournisseur = Fournisseur::findOrFail($id_fournisseur);
-        $fournisseur->update($request->all());
+        $fournisseur->update($request->only(['nom_fournisseur', 'contact_fournisseur', 'email_fournisseur', 'adresse_fournisseur']));
 
         return redirect()->route('boilerplate.approvisionnements.fournisseurs')
             ->with('success', 'Fournisseur mis à jour avec succès.');

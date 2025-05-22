@@ -1,6 +1,6 @@
 @extends('boilerplate::layout.index', [
-    'title' => 'Gerer fournisseurs',
-    'breadcrumb' => ['Fournisseurs', 'Gerer']
+    'title' => 'Gerer les fournisseurs',
+    'breadcrumb' => ['Fournisseurs', 'Gerer les fournisseurs']
 ])
 
 @section('content')
@@ -15,5 +15,5 @@
 </div>
 @component('boilerplate::card')
 <x-boilerplate::datatable name="fournisseurs" />
-@endcomponent   
+@endcomponent
 @endsection

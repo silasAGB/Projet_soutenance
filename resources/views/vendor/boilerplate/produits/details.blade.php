@@ -40,10 +40,6 @@
                         <td>{{ $produit->nom_produit }}</td>
                     </tr>
                     <tr>
-                        <th>@lang('Catégorie')</th>
-                        <td>{{ $produit->Categories->nom_Categorie ?? 'Non défini' }}</td>
-                    </tr>
-                    <tr>
                         <th>@lang('Prix de détail')</th>
                         <td>{{ number_format($produit->prix_details_produit, 2) }} FCFA</td>
                     </tr>
@@ -73,7 +69,7 @@
                     </tr>
                     <tr>
                         <th>@lang('Quantité par lot')</th>
-                        <td>{{ $produit->qte_lot ?? 'Non défini' }}</td>
+                        <td>{{ $produit->qte_lot ?? 'Non défini' }} </td>
                     </tr>
                 </tbody>
             </table>

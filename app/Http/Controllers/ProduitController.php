@@ -62,7 +62,7 @@ class ProduitController extends Controller
 
     public function show($id_produit)
     {
-        $produit = Produit::findOrFail($id_produit);
+        $produit = Produit::with('categorie')->findOrFail($id_produit);
         return view('boilerplate::produits.details', compact('produit'));
     }
 

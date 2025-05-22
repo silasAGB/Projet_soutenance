@@ -54,9 +54,9 @@ class ProductionsDatatable extends Datatable
             Column::add(__('Personnel_affecté'))
                 ->data('nom_personnel'),
 
-            Column::add(__('Avaries'))
+            /*Column::add(__('Avaries'))
                 ->data('avaries'),
-
+            */
             Column::add(__('Statut'))
                 ->data('statut'),
 

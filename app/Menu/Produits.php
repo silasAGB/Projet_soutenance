@@ -12,7 +12,7 @@ class Produits implements MenuItemInterface
         $item = $menu->add('Produits', [
             'permission' => 'backend',
             'active' => 'boilerplate.produits',
-            'icon' => 'square',
+            'icon' => 'boxes-stacked',
             'order' => 1,
         ]);
 

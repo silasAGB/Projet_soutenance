@@ -10,20 +10,14 @@ class Approvisionnement implements MenuItemInterface
     public function make(Builder $menu)
     {
         $item = $menu->add('Approvisionnements', [
-            'permission' => 'backend',
+            'permission' => 'voir_approvisionnements',
             'active' => 'boilerplate.approvisionnements',
             'icon' => 'fa fa-truck',
             'order' => 4,
         ]);
 
-        $item->add('Statistique Approvisionnements', [
-            'permission' => 'backend',
-            'active' => 'boilerplate.approvisionnements.statistiques',
-            'route' => 'boilerplate.approvisionnements.statistiques',
-        ]);
-
         $item->add('Gérer Approvisionnements', [
-            'permission' => 'backend',
+            'permission' => 'voir_approvisionnements',
             'active' => ['boilerplate.approvisionnements.gerer','boilerplate.approvisionnements.create','boilerplate.approvisionnements.details','boilerplate.approvisionnements.edit'],
             'route' => 'boilerplate.approvisionnements.gerer',
         ]);

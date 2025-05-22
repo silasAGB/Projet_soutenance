@@ -42,12 +42,22 @@ class MatierePremiereController extends Controller
 
         // Enregistrer le mouvement de stock
         MouvementMp::create([
-            'id_mp' => $matierePremiere->id_MP,
+            'id_MP' => $matierePremiere->id_MP,
             'type' => 'entrée',
             'quantité' => $matierePremiere->qte_stock,
             'stock_disponible' => $matierePremiere->qte_stock,
             'date_mouvement' => now(),
         ]);
+
+        // Ajouter un log détaillé
+    Log::channel('stack')->info('Matière première ajoutée', [
+        'action' => 'Ajout',
+        'matiere_premiere' => $matierePremiere->nom_MP,
+        'id_mp' => $matierePremiere->id_MP,
+        'quantité_stock' => $matierePremiere->qte_stock,
+        'utilisateur' => auth()->user()->name ?? 'Système',
+        'heure' => now()->toDateTimeString(),
+    ]);
 
         // Vérifier si le stock est déjà sous le seuil minimum
         $this->checkAndSendStockAlert($matierePremiere);
@@ -90,6 +100,16 @@ class MatierePremiereController extends Controller
             $matierePremiere->fournisseurs()->attach($fournisseur['id'], ['prix_achat' => $fournisseur['prix_achat']]);
         }
 
+        // Ajouter un log détaillé
+    Log::channel('stack')->info('Matière première modifiée', [
+        'action' => 'Modification',
+        'matiere_premiere' => $matierePremiere->nom_MP,
+        'id_mp' => $matierePremiere->id_MP,
+        'quantité_stock' => $matierePremiere->qte_stock,
+        'utilisateur' => auth()->user()->name ?? 'Système',
+        'heure' => now()->toDateTimeString(),
+    ]);
+
         // Vérifier si le stock est sous le seuil minimum après la mise à jour
         $this->checkAndSendStockAlert($matierePremiere);
 
@@ -100,6 +120,16 @@ class MatierePremiereController extends Controller
     public function destroy($id_MP)
     {
         $matierePremiere = MatierePremiere::findOrFail($id_MP);
+
+        // Ajouter un log détaillé
+    Log::channel('stack')->info('Matière première supprimée', [
+        'action' => 'Suppression',
+        'matiere_premiere' => $matierePremiere->nom_MP,
+        'id_mp' => $matierePremiere->id_MP,
+        'utilisateur' => auth()->user()->name ?? 'Système',
+        'heure' => now()->toDateTimeString(),
+    ]);
+
         $matierePremiere->delete();
 
         return redirect()->route('boilerplate.matierepremieres.index')

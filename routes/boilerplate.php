@@ -148,6 +148,8 @@ Route::group([
         Route::put('update/{id_fournisseur}', [FournisseurController::class, 'update'])->name('fournisseurs.update');
         Route::delete('destroy/{id_fournisseur}', [FournisseurController::class, 'destroy'])->name('fournisseur.destroy');
 
+
+
         // Productions Routes
         Route::prefix('productions')->group(function () {
             Route::get('statistiques', [ProductionController::class, 'statistiques'])->name('productions.statistiques');
