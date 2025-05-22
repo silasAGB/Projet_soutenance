@@ -21,6 +21,11 @@ class MouvementproduitController extends Controller
         $query->where('id_produit', $request->produit);
     }
 
+    // Filtrer par type si spécifié
+    if ($request->filled('type')) {
+        $query->where('type', $request->type);
+    }
+
     // Dates de filtrage
     $startDate = $request->start_date ?? now()->subMonth()->toDateString();
     $endDate = $request->end_date ?? now()->toDateString();

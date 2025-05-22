@@ -24,6 +24,11 @@ class MouvementmpController extends Controller
         $query->where('id_MP', $request->matiere_premiere);
     }
 
+    // Filtrer par type si spécifié
+    if ($request->filled('type')) {
+        $query->where('type', $request->type);
+    }
+
     // Dates de filtrage
     $startDate = $request->start_date ?? now()->subMonth()->toDateString();
     $endDate = $request->end_date ?? now()->toDateString();

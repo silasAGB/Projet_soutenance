@@ -30,6 +30,15 @@
                 <!-- Filtres par date -->
                 <input type="date" name="start_date" class="form-control mx-1" placeholder="Début" value="{{ request('start_date') }}">
                 <input type="date" name="end_date" class="form-control mx-1" placeholder="Fin" value="{{ request('end_date') }}">
+
+                <!-- Filtre par type -->
+            <select name="type" class="form-control mx-1">
+                <option value="">@lang('Entrée/Sortie')</option>
+                <option value="entrée" {{ request('type') == 'entrée' ? 'selected' : '' }}>@lang('Entrée')</option>
+                <option value="sortie" {{ request('type') == 'sortie' ? 'selected' : '' }}>@lang('Sortie')</option>
+            </select>
+
+
                 <button type="submit" class="btn btn-primary mx-1">@lang('Filtrer')</button>
             </form>
         </span>
